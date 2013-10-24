@@ -8,9 +8,9 @@ String print = "";
 Gson gson = new Gson();
 
 
-if(function.equals("check_environment")){
+if(function.equals("step_1")){
 	install.path = path;
-	print = gson.toJson( install.checkEnvironment() );
+	print = gson.toJson( install.step_1() );
 }
 
 if(function.equals("check_db")){

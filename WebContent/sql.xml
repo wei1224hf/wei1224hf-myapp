@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [   <!ELEMENT root ANY>   <!ELEMENT item ANY>   <!ATTLIST item ID ID #REQUIRED>   <!ATTLIST item Explanation CDATA #IMPLIED>]>
+<root>
+	<item ID="basic_user">
+		<item ID="basic_user__session_update">
+			update basic_user_session set
+
+			session = __r_session__
+			,lastaction = 'session_update'
+			,lastactiontime = now()
+			,count_actions =
+			count_actions + 1
+
+			where user_code = __user_code__ and
+			(
+			md5( concat(
+			session, hour(now()) ) ) = __session__ or
+			md5( concat( session,
+			hour(now())-1 ) ) = __session__
+			)
+		</item>
+		<item ID="basic_user__getSession">
+			select user_type,group_code,permissions from
+			basic_user_session where
+			user_code = __user_code__ and
+			(
+			md5( concat(
+			session, hour(now()) ) ) = __session__ or
+			md5( concat( session,
+			hour(now())-1 ) ) = __session__
+			)
+		</item>
+		<item ID="basic_user__logout">
+			delete from basic_user_session where user_code =
+			__user_code__ and
+			(
+			md5( concat( session, hour(now()) ) ) = __session__
+			or
+			md5( concat( session, hour(now())-1 ) ) = __session__
+			)
+		</item>
+		<item ID="basic_user__login_session">
+			insert into basic_user_session
+			(
+			user_id
+			,user_code
+			,group_code
+			,groups
+			,user_type
+			,permissions
+			,session
+			,ip
+			,client
+			,gis_lat
+			,gis_lot
+			) values (
+			(select id from basic_user where username =
+			__username__)
+			,__username__
+			,(select group_code from basic_user where
+			username = __username__)
+			,(select group_all from basic_user where
+			username = __username__)
+			,(select type from basic_user where username
+			= __username__)
+			,__permissions__
+			,__session__
+			,__ip__
+			,__client__
+			,__gis_lat__
+			,__gis_lot__
+			);
+		</item>
+		<item ID="basic_user__login_check">
+			select
+
+			basic_user.username,
+			basic_user.money,
+			basic_user.credits,
+			basic_user.group_code,
+			basic_user.group_all,
+			basic_user.id,
+			basic_user.type,
+			basic_user.status,
+			(select photo from
+			oa_person where id = basic_user.id_person) as photo,
+			(select value
+			from basic_parameter where reference = 'basic_user__type' and
+			basic_parameter.code = basic_user.type) as type_,
+			(select value from
+			basic_parameter where reference = 'basic_user__status' and
+			basic_parameter.code = basic_user.status) as status_,
+			(select
+			basic_group.name from basic_group where basic_group.code =
+			basic_user.group_code) as group_name,
+
+			basic_user_session.session,
+			basic_user_session.client,
+			basic_user_session.ip
+
+			from basic_user left
+			join basic_user_session on basic_user_session.user_code =
+			basic_user.username where basic_user.username = __username__ and
+			(
+			md5(concat(basic_user.password, hour(now()) )) = __password__ or
+			md5(concat(basic_user.password, hour(now())-1 )) = __password__
+			) and
+			EXISTS
+			(select basic_group.code from basic_group where
+			basic_group.code =
+			basic_user.group_code and basic_group.status =
+			'10')
+
+		</item>
+		<item ID="basic_user__login_logout">
+			delete from basic_user_session where user_code =
+			__user_code__
+		</item>
+		<item ID="basic_user__getPermission">
+			select * FROM(
+			SELECT basic_group_2_permission.permission_code,max(credits) as
+			credits,min(cost) as cost from basic_group_2_user
+			, basic_group_2_permission where basic_group_2_user.group_code =
+			basic_group_2_permission.group_code
+			and basic_group_2_user.user_code = __username__
+			group by permission_code
+			) temptable ,basic_permission where temptable.permission_code =
+			basic_permission.code order by basic_permission.code
+		</item>
+		<item ID="basic_user__checkPermission">
+			select * from basic_user_session where
+			concat(",",permissions,",") like '%,__actioncode__,%' and user_code =
+			__user_code__ and md5( concat(session,hour(now()) )) = __session__
+		</item>
+		<item ID="basic_user__grid">
+			select
+
+			username
+			,money
+			,credits
+			,lastlogintime
+			,lastlogouttime
+			,(select name from basic_group where code =
+			basic_user.group_code )
+			as
+			group_name
+			,group_code
+			,type
+			,id
+			,status
+			,time_created
+			,creater_code
+			,creater_group_code,
+			(select extend4 from
+			basic_memory where code =
+			basic_user.type and extend5 =
+			'basic_user__type') as type_,
+			(select
+			extend4 from basic_memory where
+			code = basic_user.status and extend5
+			= 'basic_user__status') as
+			status_
+
+			from basic_user
+		</item>
+		<item ID="basic_user__view">
+			SELECT
+
+			basic_user.username,
+			basic_user.money,
+			basic_user.credits,
+			left(basic_user.lastlogintime,10) as
+			lastlogintime,
+			left(basic_user.lastlogouttime,10) as lastlogouttime,
+			basic_user.count_login,
+			basic_user.count_actions_period,
+			basic_user_session.client,
+			basic_user_session.ip,
+			basic_user_session.session,
+			basic_user.count_actions,
+			basic_user.group_code,
+			basic_user.group_all,
+
+			basic_user.id,
+			basic_user.creater_code,
+			basic_user.creater_group_code,
+			left(basic_user.time_created,10) as time_created,
+			left(basic_user.time_lastupdated,10) as time_lastupdated,
+			basic_user.count_updated,
+			basic_user.type,
+			basic_user.status,
+			(select
+			extend4 from basic_memory where code = basic_user.type and
+			extend5 =
+			'basic_user__type') as type_,
+			(select extend4 from
+			basic_memory where
+			code = basic_user.status and extend5
+			=
+			'basic_user__status') as
+			status_,
+
+			basic_user.remark
+
+			FROM
+			basic_user
+			Left
+			Join basic_user_session ON
+			basic_user.username =
+			basic_user_session.user_code
+			where basic_user.id
+			= __id__
+
+		</item>
+		<item ID="basic_user__group_get">
+			SELECT
+			basic_group.name,
+			basic_group.code,
+			t.user_code
+			FROM
+			basic_group
+			Left Join (select user_code,group_code from
+			basic_group_2_user where
+			user_code = __username__) t ON
+			basic_group.code = t.group_code
+
+			order by basic_group.code
+		</item>
+	</item>
+	<item ID="basic_group">
+		<item ID="basic_group__permission_get">
+			SELECT
+			basic_permission.name,
+			basic_permission.code,
+			basic_permission.icon,
+			basic_permission.id,
+
+			basic_group_2_permission.cost,
+			basic_group_2_permission.credits
+
+			FROM
+			basic_permission
+			left Join ( select * from basic_group_2_permission
+			where group_code =
+			__group_code__ ) basic_group_2_permission ON
+			basic_permission.code =
+			basic_group_2_permission.permission_code
+
+			order
+			by basic_permission.code
+		</item>
+		<item ID="basic_group__grid">
+			SELECT
+			basic_group.name,
+			basic_group.code,
+			basic_group.count_users,
+
+			type,id,status,
+			(select extend4 from
+			basic_memory where code = basic_group.type and extend5
+			=
+			'basic_group__type') as type_,
+			(select extend4 from basic_memory where
+			code = basic_group.status and
+			extend5 = 'basic_group__status') as
+			status_
+
+			FROM
+			basic_group
+
+		</item>
+		<item ID="basic_group__view">
+			SELECT
+			basic_group.`name`,
+			basic_group.`code`,
+			basic_group.count_users,
+			basic_group.id,
+			basic_group.type,
+			basic_group.`status`,
+			basic_group.remark,
+			basic_group.chief,
+			basic_group.chief_code,
+			basic_group.chief_cellphone,
+			basic_group.phone
+			FROM
+			basic_group
+
+		</item>
+	</item>
+	<item ID="basic_memory">
+		<item ID="basic_memory__init">
+			delete from basic_memory where type = 2;
+			insert into
+			basic_memory
+			(code,type,extend1) values ('basic_user','2',0);
+			update
+			basic_memory
+			set extend1 = (select max(id) from basic_user)
+			where code
+			=
+			'basic_user' and type = 2;
+			insert into basic_memory
+			(code,type,extend1) values ('government_building','2',0);
+			update
+			basic_memory set extend1 = (select max(id) from government_building)
+			where code = 'government_building' and type = 2;
+			insert into
+			basic_memory (code,type,extend1) values
+			('government_family','2',0);
+			update basic_memory set extend1 = (select
+			max(id) from
+			government_family)
+			where code = 'government_family' and
+			type = 2;
+
+			insert into basic_memory (code,type,extend1) values
+			('government_resident','2',0);
+			update basic_memory set extend1 =
+			(select max(id) from government_resident) where code =
+			'government_resident' and type = 2;
+
+			insert into basic_memory (code,type,extend1) values
+			('government_company','2',0);
+			update basic_memory set extend1 =
+			(select max(id) from government_company) where code =
+			'government_company' and type = 2;
+
+			insert into basic_memory (code,type,extend1) values ('oa_person','2',0);
+			update basic_memory set extend1 = (select max(id) from oa_person)
+			where code = 'oa_person' and type = 2;
+
+			insert into basic_memory
+			(code,type,extend1) values ('oa_plan','2',0);
+			update
+			basic_memory set
+			extend1 = (select max(id) from oa_plan)
+			where
+			code = 'oa_plan' and type
+			= 2;
+
+			insert into basic_memory
+			(code,type,extend1) values ('oa_work','2',0);
+			update
+			basic_memory set extend1 = (select max(id) from oa_work)
+			where
+			code = 'oa_work' and type = 2;
+
+			delete from basic_memory where type = 1;
+
+			insert into basic_memory
+			(code,type,extend1,extend4,extend5) select
+			code,1,extend1,value,reference from basic_parameter where reference
+			like '%\\_%\\_\\_%';
+			insert into basic_memory
+			(code,type,extend1,extend4,extend5) select
+			code,1,extend1,value,reference from basic_parameter where reference =
+			'industry' and (code &gt;= 'A') ;
+			delete from basic_memory where type
+			= 3;
+
+			select 1
+		</item>
+		<item ID="basic_memory__id">
+			select extend1 as id from basic_memory where type = 2
+			and
+			code = __code__
+		</item>
+		<item ID="basic_memory__id_add">
+			update basic_memory set extend1 = (extend1 + 1) where
+			type
+			= 2 and code =
+			__code__
+		</item>
+		<item ID="basic_memory__id_update">
+			update basic_memory set extend1 = ((select max(id) from
+			__code__)) where type
+			= 2 and code =
+			'__code__'
+		</item>
+	</item>
+	<item ID="government_building">
+
+		<item ID="government_building__grid">
+			select tempitem.*,astext(gis_polygon_16.ogc_geom) AS wkt,gis_polygon_16.id
+			AS id_gis from (
+			SELECT
+			government_building.name,
+			government_building.count_floor,
+			government_building.owner,
+			government_building.owner_type,
+			government_building.population,
+			government_building.photo,
+			(select
+			extend4 from basic_memory where code = government_building.owner_type
+			and extend5 = 'government_building__owner_type' ) as
+			government_building__owner_type,
+			government_building.owner_person_id,
+			government_building.id_gis_polygon,
+			government_building.time_founded,
+			government_building.id,
+			government_building.creater_group_code,
+			government_building.creater_code,
+
+			government_building.type,
+			(select
+			extend4 from basic_memory where code = government_building.type and
+			extend5 = 'government_building__type' ) as government_building__type,
+			government_building.status,
+			(select extend4 from basic_memory where
+			code = government_building.status and extend5 =
+			'government_building__status' ) as government_building__status,
+			government_building.code
+
+			FROM
+			government_building
+
+
+			__WHERE__ __ORDER__ __PAGE__) tempitem
+			LEFT JOIN gis_polygon_16 on tempitem.id_gis_polygon = gis_polygon_16.id
+
+		</item>
+		<item ID="government_building__view">
+			SELECT
+			(select name from basic_group where code =
+			left(government_building.code,10)
+			) as item_10,
+			(select name from
+			basic_group where code = left(government_building.code,8)
+			) as item_8,
+			(select name from basic_group where code =
+			left(government_building.code,6)
+			) as item_6,
+			government_building.code,
+			government_building.name,
+			government_building.count_floor,
+			government_building.population,
+			government_building.owner,
+			government_building.owner_type,
+			government_building.owner_person_id,
+			left(government_building.time_founded,10) as time_founded,
+			government_building.photo,
+			government_building.id,
+			government_building.creater_code,
+			government_building.creater_group_code,
+			left(government_building.time_created,10) as time_created,
+			government_building.type,
+			(select extend4 from basic_memory where code
+			= government_building.type and extend5 = 'government_building__type'
+			) as type_,
+			government_building.status,
+			(select extend4 from basic_memory where code =
+			government_building.status and extend5 =
+			'government_building__status' ) as status_,
+			government_building.remark
+			FROM
+			government_building
+
+			where id = __id__
+		</item>
+	</item>
+	<item ID="government_family">
+		<item ID="government_family__grid">
+			SELECT
+			(select name from basic_group where code =
+			left(government_family.code,10) ) as item_10,
+			(select name from
+			basic_group where code = left(government_family.code,8) ) as item_8,
+			(select name from basic_group where code =
+			left(government_family.code,6) ) as item_6,
+			government_family.code,
+			government_family.name,
+			government_family.owner,
+			government_family.owner_person_id,
+			left(government_family.time_founded,10) as time_founded,
+			left(government_family.time_over,10) as time_over,
+			government_family.types,
+
+			(
+			select group_concat(value) from
+			government_family tempt, ( select
+			extend1,extend4 as value from
+			basic_memory where extend5 =
+			'government_family__types' ) tempt2
+			where
+			tempt.id = government_family.id and find_in_set( tempt2.extend1,
+			tempt.types )
+			) as types_,
+
+			government_family.income,
+			government_family.count_member,
+			government_family.photo,
+			government_family.id,
+			government_family.creater_code,
+			government_family.creater_group_code,
+			(select extend4 from
+			basic_memory where extend5 = 'group' and code =
+			government_family.creater_group_code ) as creater_group_code_,
+			government_family.time_created,
+			government_family.time_lastupdated,
+			government_family.count_updated,
+			government_family.type,
+			(select
+			extend4 from basic_memory where extend5 = 'government_family__type'
+			and code = government_family.type ) as type_,
+
+			government_family.status,
+			(select extend4 from basic_memory where
+			extend5 =
+			'government_family__status' and code =
+			government_family.status ) as
+			status_,
+			government_family.remark
+			FROM
+			government_family
+		</item>
+		<item ID="government_family__view">
+			SELECT
+			(select name from basic_group where code =
+			left(government_family.code,10) )
+			as item_10,
+			(select name from
+			basic_group where code = left(government_family.code,8) )
+			as item_8,
+			(select name from basic_group where code =
+			left(government_family.code,6) )
+			as item_6,
+			government_family.code,
+			government_family.name,
+			government_family.owner,
+			government_family.owner_person_id,
+			left(government_family.time_founded,10) as time_founded,
+			left(government_family.time_over,10) as time_over,
+			government_family.types,
+
+			(
+			select group_concat(value) from
+			government_family tempt, ( select
+			extend1,extend4 as value from
+			basic_memory where extend5 =
+			'government_family__types' ) tempt2
+			where
+			tempt.id = government_family.id and find_in_set( tempt2.extend1,
+			tempt.types )
+			) as types_,
+
+			government_family.photo,
+			government_family.income,
+			government_family.count_member,
+			government_family.id,
+			government_family.creater_code,
+			government_family.creater_group_code,
+			(select extend4 from
+			basic_memory where extend5 = 'group' and code =
+			government_family.creater_group_code ) as creater_group_code_,
+
+			left(government_family.time_lastupdated,10) as time_lastupdated,
+			left(government_family.time_created,10) as time_created,
+
+			government_family.count_updated,
+			government_family.type,
+			(select
+			extend4 from basic_memory where extend5 = 'government_family__types'
+			and code = government_family.type ) as type_,
+
+			government_family.status,
+			(select extend4 from basic_memory where
+			extend5 =
+			'government_family__status' and code =
+			government_family.status ) as
+			status_,
+			government_family.remark
+			FROM
+			government_family
+
+			where id = __id__
+		</item>
+	</item>
+	<item ID="government_resident">
+		<item ID="government_resident__grid">
+			SELECT
+			(select name from basic_group where code = left(
+			government_resident.code,10) )
+			as item_10,
+			(select name from
+			basic_group where code = left( government_resident.code,8) )
+			as
+			item_8,
+			(select name from basic_group where code = left(
+			government_resident.code,6) )
+			as item_6,
+			government_resident.code,
+			government_resident.id,
+			government_resident.name,
+			government_resident.job_code,
+			government_resident.relation,
+			government_resident.time_in,
+			government_resident.time_out,
+			government_resident.person_id,
+			government_resident.job,
+			government_resident.job_code,
+
+
+
+			government_resident.`type`,
+			government_resident.types,
+			government_resident.`status`,
+			(select
+			extend4 from basic_memory where extend5 =
+			'government_resident__type'
+			and code = government_resident.type ) as type_,
+			(select extend4 from
+			basic_memory where extend5 =
+			'government_resident__relation'
+			and code =
+			government_resident.relation ) as relation_,
+			(select extend4 from
+			basic_memory where extend5 = 'industry'
+			and code =
+			government_resident.job_code ) as government_resident__job,
+			(select
+			extend4 from basic_memory where extend5 =
+			'government_resident__status'
+			and code = government_resident.status )
+			as status_
+			FROM
+			government_resident
+
+		</item>
+		<item ID="government_resident__view">
+			SELECT
+			government_resident.code,
+			government_resident.name,
+			left(government_resident.time_in,10) as
+			time_in,
+			left(government_resident.time_out,10) as time_out,
+			government_resident.person_id,
+			government_resident.types,
+			government_resident.job,
+			government_resident.job_code,
+			government_resident.relation,
+			government_resident.id,
+			government_resident.creater_code,
+			government_resident.creater_group_code,
+			left(government_resident.time_created,10) as time_created,
+			left(government_resident.time_lastupdated,10) as time_lastupdated,
+			government_resident.count_updated,
+			government_resident.`type`,
+			government_resident.`status`,
+			government_resident.remark,
+
+
+			(select
+			extend4 from basic_memory where extend5 =
+			'government_resident__relation' and code =
+			government_resident.relation ) as relation_,
+			(select extend4 from
+			basic_memory where extend5 = 'industry' and code =
+			government_resident.job_code ) as government_resident__job,
+			(select
+			extend4 from basic_memory where extend5 = 'government_resident__type'
+			and code = government_resident.type ) as type_,
+			(select extend4 from
+			basic_memory where extend5 = 'government_resident__status' and code =
+			government_resident.status ) as status_
+
+
+			FROM
+			government_resident
+
+			where government_resident.id = __id__
+		</item>
+	</item>
+	<item ID="oa_person">
+		<item ID="oa_person__view">
+			SELECT
+			oa_person.name,
+			left(oa_person.birthday,10) as
+			birthday,
+			oa_person.card,
+			(select extend4 from basic_memory where
+			extend5 = 'oa_person__card'
+			and code = oa_person.card ) as card_,
+
+			oa_person.photo,
+			oa_person.height,
+			oa_person.nationality,
+			oa_person.gender,
+			(select extend4 from basic_memory where extend5 =
+			'oa_person__gender'
+			and code = oa_person.gender ) as gender_,
+			oa_person.nation,
+			(select extend4 from basic_memory where extend5 =
+			'oa_person__nation'
+			and code = oa_person.nation ) as nation_,
+			oa_person.marriage,
+			(select extend4 from basic_memory where extend5 =
+			'oa_person__marriage'
+			and code = oa_person.marriage ) as marriage_,
+			oa_person.degree,
+			(select extend4 from basic_memory where extend5 =
+			'oa_person__degree'
+			and code = oa_person.degree ) as degree_,
+
+			oa_person.politically,
+			(select extend4 from basic_memory where extend5
+			= 'oa_person__politically'
+			and code = oa_person.politically ) as
+			politically_,
+
+
+
+			oa_person.id,
+			oa_person.cellphone,
+			oa_person.email,
+			oa_person.qq,
+			oa_person.address_birth,
+			oa_person.address_birth_code,
+			oa_person.degree_school,
+			oa_person.degree_school_code,
+			oa_person.address,
+			oa_person.address_code,
+			oa_person.cardid
+			FROM
+			oa_person
+
+			where id = __id__
+		</item>
+	</item>
+	<item ID="oa_plan">
+		<item ID="oa_plan__gantt">
+			SELECT
+			oa_plan.code,
+			oa_plan.name,
+			left(oa_plan.plan_time_start,10) as time_start,
+			left(oa_plan.plan_time_stop,10) as time_stop,
+			UNIX_TIMESTAMP(oa_plan.plan_time_start) as from_,
+			UNIX_TIMESTAMP(oa_plan.plan_time_stop) as to_,
+			oa_plan.plan_personhour,
+			oa_plan.plan_money,
+			oa_plan.plan_output,
+			oa_plan.result_time_start,
+			oa_plan.result_time_stop,
+			oa_plan.result_personhour,
+			oa_plan.result_money,
+			oa_plan.result_output,
+			oa_plan.count_work,
+			oa_plan.count_plan,
+			oa_plan.group_incharge,
+			oa_plan.groups_participate,
+			oa_plan.user_incharge,
+			oa_plan.quotes,
+			oa_plan.quotes_weight,
+			oa_plan.deviation,
+			oa_plan.appraise,
+			oa_plan.id,
+			oa_plan.creater_code,
+			oa_plan.creater_group_code
+			FROM
+			oa_plan
+		</item>
+		<item ID="oa_plan__usergrid">
+			SELECT
+			oa_person.name,basic_user.username,
+			(select extend4
+			from basic_memory where basic_memory.code =
+			basic_user.group_code
+			limit 1) as groupname,
+			basic_user.group_code
+			FROM
+			basic_user,oa_person
+		</item>
+		<item ID="oa_plan__view">
+			SELECT
+			oa_plan.code,
+			oa_plan.name,
+
+
+
+			left(oa_plan.plan_time_start,10) as plan_time_start,
+			left(oa_plan.plan_time_stop,10) as plan_time_stop,
+			oa_plan.plan_personhour,
+			oa_plan.plan_money,
+			oa_plan.plan_output,
+			oa_plan.result_time_start,
+			oa_plan.result_time_stop,
+			oa_plan.result_personhour,
+			oa_plan.result_money,
+			oa_plan.result_output,
+			oa_plan.count_work,
+			oa_plan.count_plan,
+			oa_plan.group_incharge,
+			oa_plan.user_incharge,
+			oa_plan.groups_participate,
+			oa_plan.groups_weight,
+			oa_plan.quotes,
+			oa_plan.quotes_weight,
+			oa_plan.deviation,
+			oa_plan.appraise,
+			oa_plan.id,
+			oa_plan.creater_code,
+			oa_plan.updater_code,
+			oa_plan.creater_group_code,
+			oa_plan.time_created,
+			oa_plan.time_lastupdated,
+			oa_plan.count_updated,
+			oa_plan.`type`,
+			oa_plan.`status`,
+
+			oa_plan.files,
+			oa_plan.content,
+
+			oa_plan.remark
+			FROM
+			oa_plan where id = __id__
+		</item>
+		<item ID="oa_plan__groupgrid">
+			SELECT
+			basic_group.name,
+			basic_group.code
+			FROM
+			basic_group
+		</item>
+		<item ID="oa_plan__quotesgrid">
+			SELECT
+			oa_plan.code,
+			oa_plan.name
+			FROM
+			oa_plan
+
+		</item>
+		<item ID="oa_plan__statistics_time">
+			SELECT
+			left(oa_plan.plan_time_start, __size__) as time_
+			,count(*) as count_
+			FROM
+			oa_plan
+		</item>
+		<item ID="oa_plan__grid">
+
+			SELECT
+			oa_plan.`code`,
+			oa_plan.`name`,
+			oa_plan.content,
+			oa_plan.files,
+			left(oa_plan.plan_time_start,10) as plan_time_start,
+			left(oa_plan.plan_time_stop,10) as plan_time_stop,
+			oa_plan.plan_personhour,
+			oa_plan.plan_money,
+			oa_plan.plan_output,
+			oa_plan.result_time_start,
+			oa_plan.result_time_stop,
+			oa_plan.result_personhour,
+			oa_plan.result_money,
+			oa_plan.result_output,
+			oa_plan.count_work,
+			oa_plan.count_plan,
+			oa_plan.group_incharge,
+			oa_plan.user_incharge,
+			oa_plan.groups_participate,
+			oa_plan.groups_weight,
+			oa_plan.quotes,
+			oa_plan.quotes_weight,
+			oa_plan.deviation,
+			oa_plan.appraise,
+			oa_plan.id,
+			oa_plan.creater_code,
+			oa_plan.updater_code,
+			oa_plan.creater_group_code,
+			oa_plan.time_created,
+			oa_plan.time_lastupdated,
+			oa_plan.count_updated,
+			oa_plan.type,
+			oa_plan.`status`,
+			oa_plan.remark,
+
+			(select extend4 from basic_memory where extend5 = 'oa_plan__type' and code =
+			oa_plan.type ) as type_,
+			(select extend4 from basic_memory where extend5 = 'oa_plan__status' and code
+			= oa_plan.status ) as status_
+
+
+
+			FROM
+			oa_plan
+			__WHERE__
+			__ORDER__
+			__PAGE__
+
+		</item>
+	</item>
+	<item ID="oa_work">
+		<item ID="oa_work__grid">
+			SELECT
+			oa_work.code,
+			oa_work.code_from,
+			oa_work.plan,
+			(select name from oa_plan where code = oa_work.plan limit 1 ) as plan_,
+			oa_work.title,
+			left(oa_work.`time`,10) as time,
+			oa_work.`hour`,
+			oa_work.content,
+			oa_work.businesstype,
+			(select basic_parameter.value from basic_parameter where code =
+			oa_work.businesstype and reference = 'oa_work__businesstype' limit 1)
+			as businesstype_,
+
+			oa_work.id,
+			oa_work.updater_code,
+			oa_work.creater_code,
+			oa_work.creater_group_code,
+			oa_work.time_created,
+			oa_work.time_lastupdated,
+			oa_work.count_updated,
+			oa_work.`type`,
+			(select basic_parameter.value from basic_parameter where code = oa_work.type
+			and reference = 'oa_work__type' limit 1) as type_,
+			oa_work.`status`,
+			(select basic_parameter.value from basic_parameter where code =
+			oa_work.status and reference = 'oa_work__status' limit 1) as status_,
+			oa_work.remark
+			FROM
+			oa_work
+		</item>
+	</item>
+
+	<item ID="government_company">
+		<item ID="government_company__grid">
+			select * from government_company
+		</item>
+		<item ID="government_company__view">
+			SELECT
+
+			government_company.`code`,
+			government_company.`name`,
+			government_company.code2,
+			government_company.tax,
+			government_company.address,
+			government_company.`owner`,
+			government_company.id_owner,
+			government_company.cellphone,
+			government_company.phone,
+			government_company.business,
+			government_company.business_code,
+			government_company.longitude,
+			government_company.latitude,
+			government_company.code_building,
+
+			government_company.time_in,
+			government_company.time_out,
+			government_company.path_photo,
+			government_company.type,
+			government_company.`status`,
+			government_company.count_employee,
+			government_company.property,
+			government_company.`turnover `,
+
+			government_company.id,
+			government_company.creater_code,
+			government_company.creater_group_code,
+			government_company.time_created,
+			government_company.time_lastupdated,
+			government_company.count_updated,
+			government_company.remark
+
+			FROM
+			government_company
+
+			where government_company.id = __id__
+		</item>
+	</item>
+</root>
