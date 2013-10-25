@@ -285,7 +285,7 @@ public class tools {
 		tools.importIl8n2DB();
 		Statement stmt = null;
 		Connection conn = tools.getConn();
-		String sql = tools.getConfigItem("basic_memory__init");
+		String sql = tools.getSQL("basic_memory__init");
 		String[] sql_ = sql.split(";");
 		
 		try {
@@ -496,13 +496,51 @@ public class tools {
 		}
 	}
 
-	public static String sqlXML = null;
+	public static String configXML = null;
 	public static String getConfigItem(String id) {
+		String item = "";
+		if (tools.configXML == null) {
+			try {
+				String path = tools.class.getClassLoader().getResource("")
+						+ "../../config.xml";
+				if(System.getProperty("os.name").contains("Windows")){
+					path = path.substring(6);
+				}else{
+					path = path.substring(5);
+				}
+				File file = new File(path);
+				StringBuffer buffer = new StringBuffer();
+				InputStreamReader isr = new InputStreamReader(
+						new FileInputStream(file), "utf-8");
+				BufferedReader br = new BufferedReader(isr);
+				int s;
+				while ((s = br.read()) != -1) {
+					buffer.append((char) s);
+				}
+				tools.configXML = buffer.toString();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			Document document = DocumentHelper.parseText(tools.configXML);
+			item = document.elementByID(id).getText();
+		} catch (DocumentException e) {
+			System.out.println(tools.configXML);
+			e.printStackTrace();
+		}
+
+		return item;
+	}
+	
+	public static String sqlXML = null;
+	public static String getSQL(String id) {
 		String item = "";
 		if (tools.sqlXML == null) {
 			try {
 				String path = tools.class.getClassLoader().getResource("")
-						+ "../../config.xml";
+						+ "../../sql.xml";
 				if(System.getProperty("os.name").contains("Windows")){
 					path = path.substring(6);
 				}else{

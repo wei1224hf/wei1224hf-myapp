@@ -8,24 +8,24 @@ String print = "";
 Gson gson = new Gson();
 
 
-if(function.equals("step_1")){
+if(function.equals("step1")){
 	install.path = path;
-	print = gson.toJson( install.step_1() );
+	print = gson.toJson( install.step1() );
 }
 
-if(function.equals("check_db")){
+if(function.equals("step2")){
 	install.unm = request.getParameter("unm");
 	install.host = request.getParameter("host");
 	install.pwd = request.getParameter("pwd");
 	install.port = request.getParameter("port");
 	install.db = request.getParameter("db");
 	install.il8n = request.getParameter("il8n");
-	print = gson.toJson( install.checkDB() );
+	print = gson.toJson( install.step2() );
 }
 
-if(function.equals("init")){
+if(function.equals("step3")){
 	install.path = path;
-	print = gson.toJson( install.init() );
+	print = gson.toJson( install.step3() );
 }
 
 if(function.equals("insert")){

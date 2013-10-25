@@ -30,7 +30,7 @@ public class install {
 
 	public static String path = "";
 
-	public static Hashtable step_1() {
+	public static Hashtable step1() {
 		Hashtable t_return = new Hashtable();
 
 		// 判断配置文件是否可写
@@ -75,8 +75,7 @@ public class install {
 			Document document = DocumentHelper.parseText(xml);
 			document.elementByID("APPPATH").setText(install.path);
 			String savexml = document.asXML();
-			savexml = savexml
-					.replace(
+			savexml = savexml.replace(
 							"<!DOCTYPE root>",
 							"<!DOCTYPE root [   <!ELEMENT root ANY>   <!ELEMENT item ANY>   <!ATTLIST item ID ID #REQUIRED>   <!ATTLIST item Explanation CDATA #IMPLIED>]>");
 
@@ -104,13 +103,15 @@ public class install {
 		}
 
 		// 判断主要业务文件夹
-		f_config = new File(install.path + "\\file");
+		String otherPath = "";
+		otherPath = "\\file";
+		f_config = new File(install.path +otherPath );
 		if (!(f_config.isDirectory() && f_config.canWrite())) {
 			t_return.put("status", "2");
 			t_return.put(
 					"msg",
 					install.path
-							+ "\\file can't be written. please modify the authority and try again");
+							+ otherPath+ " can't be written. please modify the authority and try again");
 			return t_return;
 		}
 
@@ -132,7 +133,7 @@ public class install {
 
 	public static String unm, pwd, host, port, db, il8n = "";
 
-	public static Hashtable checkDB() {
+	public static Hashtable step2() {
 		Hashtable t_return = new Hashtable();
 		Connection conn = null;
 
@@ -232,7 +233,7 @@ public class install {
 
 	public static String XLSSQL = null;
 
-	public static Hashtable init() {
+	public static Hashtable step3() {
 		Hashtable t_return = new Hashtable();
 		String rootpath = tools.getConfigItem("APPPATH");
 		String filePath = rootpath
@@ -694,5 +695,9 @@ public class install {
 		t_return.put("msg", "table government_resident has been simulated : "
 				+ c + " in total");
 		return t_return;
+	}
+	
+	public static void main(String args[]){
+		install.step3();
 	}
 }

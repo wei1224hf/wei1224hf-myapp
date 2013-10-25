@@ -173,7 +173,7 @@ public class basic_group {
 		
 		String where = " where 1=1 ";
 		String sql = tools.getConfigItem("basic_group__grid");
-		Hashtable search_t = new Gson().fromJson(search, Hashtable.class);
+		Hashtable search_t = (Hashtable) new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
 			String key = (String) it.next();
 			Object value = search_t.get(key);
@@ -187,6 +187,8 @@ public class basic_group {
 				where += " and ( ( code like '"+value+"__' ) or (code = '"+value+"') )";
 			}			
 		}
+		int i_pagesize = Integer.valueOf(pagesize);
+		int i_pagenum = Integer.valueOf(pagenum);
 		sql += where + " order by "+sortname+" "+sortorder+" limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+" ";
 
 		try {
