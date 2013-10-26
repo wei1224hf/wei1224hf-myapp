@@ -949,7 +949,7 @@ public class basic_user {
 	 * 会被非常频繁的调用的查询
 	 * 用于操作内存表
 	 * */
-	public static boolean checkPermission(String user_code,String actioncode,String session) throws SQLException {
+	public static boolean checkPermission(String user_code,String actioncode,String session){
 		if(user_code.equals("guest")){
 			session = "md5( concat( session, hour(now()) ) )";
 		}else{
@@ -959,12 +959,14 @@ public class basic_user {
 				.replace("__user_code__", "'"+user_code+"'")
 				.replace("__session__", session)
 				.replace("__actioncode__", actioncode);
-		System.out.println(sql);
-		ResultSet rs = tools.getGlobalConn().createStatement().executeQuery(sql);
+		Connection conn = tools.getConn();
+		Statement stmt = null;
+		ResultSet rset = null;
+		ResultSet rs = conn.createStatement().executeQuery(sql);
 		if(rs.next()){
 
 			sql = "update basic_user_session set lastaction = '"+actioncode+"' , lastactiontime = now() , count_actions = count_actions + 1 where user_code = '"+user_code+"' ;";
-			tools.getGlobalConn().createStatement().executeUpdate(sql);
+			conn.createStatement().executeUpdate(sql);
 			rs.close();
 			return true;
 		}else{

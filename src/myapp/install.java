@@ -131,38 +131,10 @@ public class install {
 		return t_return;
 	}
 
-	public static String unm, pwd, host, port, db, il8n = "";
+	public static String unm, pwd, host, port, db, il8n ,type = "";
 
 	public static Hashtable step2() {
 		Hashtable t_return = new Hashtable();
-		Connection conn = null;
-
-		try {
-			String driver = "com.mysql.jdbc.Driver";
-			Class.forName(driver);
-
-			String url = "jdbc:mysql://" + install.host + ":" + install.port
-					+ "/" + install.db + "?characterEncoding=utf8";
-			String user = install.unm;
-			String password = install.pwd;
-			conn = DriverManager.getConnection(url, user, password);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			t_return.put("status", "2");
-			t_return.put("msg", e.toString());
-			return t_return;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			t_return.put("status", "2");
-			t_return.put("msg", e.toString());
-		} finally {
-			try {
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
-		}
 
 		String xml = "";
 		try {
@@ -189,10 +161,12 @@ public class install {
 			Document document = DocumentHelper.parseText(xml);
 
 			document.elementByID("DB_URL").setText(
-					"jdbc:mysql://" + install.host + ":" + install.port + "/"
-							+ install.db + "?characterEncoding=utf8");
-			document.elementByID("DB_UNM").setText(install.unm);
-			document.elementByID("DB_PWD").setText(install.pwd);
+					"jdbc:"+install.type+"://" + install.host + ":" + install.port + "/"
+							+ install.db + "?characterEncoding=utf8&user="+install.unm+"&password="+install.pwd);
+			document.elementByID("DB_UNM").setText("NULL");
+			document.elementByID("DB_PWD").setText("NULL");
+			document.elementByID("DB_HOST").setText("NULL");
+			document.elementByID("DB_TYPE").setText(install.type);
 			document.elementByID("IL8N").setText(install.il8n);
 
 			String savexml = document.asXML();
@@ -223,11 +197,21 @@ public class install {
 			t_return.put("msg", e.toString());
 			return t_return;
 		}
+		
+		Connection conn = tools.getConn();
+		if(conn==null){
+			t_return.put("status", "2");
+			t_return.put(
+					"msg",
+					"Can not connect to the database. ");
+		}else{
+			t_return.put("status", "1");
+			t_return.put(
+					"msg",
+					"Done, everything is right. You may check the Databse infomation from config.xml later. ");
+		}
 
-		t_return.put("status", "1");
-		t_return.put(
-				"msg",
-				"Done, everything is right. You may check the Databse infomation from config.xml later. ");
+
 		return t_return;
 	}
 
@@ -668,8 +652,7 @@ public class install {
 		String c = "0";
 		try {
 			stmt = conn.createStatement();
-			rset = stmt
-					.executeQuery("select count(*) as c from government_resident ");
+			rset = stmt.executeQuery("select count(*) as c from government_resident ");
 			rset.next();
 			c = rset.getString("c");
 		} catch (SQLException e) {

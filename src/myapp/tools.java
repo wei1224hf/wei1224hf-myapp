@@ -41,14 +41,7 @@ import com.google.gson.Gson;
 
 public class tools {
 	
-	/**
-	 * 基于JDBC的链接,最 常见,最基础,最容易上手的链接方式
-	 * 每次数据库操作,都要:
-	 *  新建一个链接
-	 *  执行数据库操作
-	 *  关闭链接
-	 * */
-	public static Connection getNewConn() {
+	public static Connection getMySQLConn() {
 		Connection conn = null;
 		try {
 			String driver = "com.mysql.jdbc.Driver";
@@ -68,40 +61,25 @@ public class tools {
 		return conn;		
 	}
 	
-	/**
-	 * 公共链接方式
-	 * 
-	 * 任何一个用户,任何一次数据库操作,都是用的同一个数据库连接
-	 * 整个 web 系统,在mysql里只会使用一个数据库链接
-	 * 这样一来,这个 conn 一旦创建之后,就不需要再 close 了,一直开着好了
-	 * 可以省去大量的  finally conn.close() 之类的代码
-	 * 但是必须修改 mysql 的 my.conf ,修改  wait_timeout ,将其改为 一年 
-	 * 以免链接空闲超时
-	 * */
-	private static Connection GlobalConn = null;
-	public static Connection getGlobalConn(){
-		String driver = "com.mysql.jdbc.Driver";
-		String url = tools.getConfigItem("DB_URL");
-		String user = tools.getConfigItem("DB_UNM");
-		String password = tools.getConfigItem("DB_PWD");
-		
-		if(tools.GlobalConn==null){
-			try {
-				Class.forName(driver);
-				tools.GlobalConn = DriverManager.getConnection(url, user, password);
-				tools.GlobalConn.createStatement().execute("SET NAMES UTF8");
-				tools.GlobalConn.createStatement().execute("set time_zone='+8:00';");
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			return tools.GlobalConn;
-		}else{
-			return tools.GlobalConn;
-		}
-	            
-	}
+	public static Connection getPostGreSqlConn() {
+		Connection conn = null;
+		try {
+			String driver = "org.postgresql.Driver";
+			Class.forName(driver);
+			String url = tools.getConfigItem("DB_URL");
+			String user = tools.getConfigItem("DB_UNM");
+			String password = tools.getConfigItem("DB_PWD");			
+			conn = DriverManager.getConnection(url, user, password);			
+			conn.createStatement().execute("SET NAMES UTF8");
+			conn.createStatement().execute("set time_zone='+8:00';");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}  
+
+		return conn;		
+	}	
 	
 	/**
 	 * 系统并发大,先优化 链接方式
@@ -160,43 +138,23 @@ public class tools {
 		}
 	} 		
 	
-	/**
-	 * 次奥! 连接池什么的真是蛋疼!
-	 * 搞不定,咱还是老老实实的用 JDBC 好了
-	 * */
+	private static String dbType = null;
 	public static Connection getConn(){
-		return tools.getNewConn();
+		if(tools.dbType==null){
+			tools.dbType = tools.getConfigItem("DB_TYPE");
+		}
+		
+		if(tools.dbType.equals("mysql")){
+			return tools.getMySQLConn();
+		}
+		else if(tools.dbType.equals("postgresql")){
+			return tools.getPostGreSqlConn();
+		}
+		else{
+			return null;
+		}
 	}
 
-	/**
-	 * GIS数据先存储在 PG 库里,切割处理完之后,再转到 MYSQL 去
-	 * */
-	public static Connection getConn_pg() {
-
-		String driver = "org.postgresql.Driver";
-		String url = "jdbc4:postgresql://localhost/c";
-		String user = "postgres";
-		String password = "postgres";
-		Connection conn = null;
-		try {
-			Class.forName(driver);
-			conn = DriverManager.getConnection(url, user, password);
-		}catch (ClassNotFoundException e) {
-			System.out.println("tools.getConn ClassNotFoundException "
-					+ e.toString());
-
-			return conn;
-		} catch (SQLException e) {
-			System.out.println("tools.getConn SQLException " + e.toString());
-			return conn;
-		} catch (Exception e) {
-			System.out.println("tools.getConn Exception " + e.toString());
-			return conn;
-		}
-		return conn;
-	}	
-
-	// 国际化语言包初始化
 	public static HashMap il8n = null;
 	public static HashMap readIl8n() {
 		if (tools.il8n == null) {
@@ -253,10 +211,11 @@ public class tools {
 	public static void importIl8n2DB(){
 		tools.il8n = null;
 		tools.readIl8n();
-		Statement statement = null;
+		Connection conn = tools.getConn();
+		Statement stmt = null;
 		try {
-			statement = tools.getGlobalConn().createStatement();
-			statement.execute("delete from basic_memory where extend6 = 'il8n';");
+			stmt = conn.createStatement();
+			stmt.execute("delete from basic_memory where extend6 = 'il8n';");
 			for (Iterator it = tools.il8n.keySet().iterator(); it.hasNext();) {
 				String key = (String) it.next();
 				HashMap value = (HashMap) tools.il8n.get(key);
@@ -267,13 +226,15 @@ public class tools {
 					String sql = "insert into basic_memory (code,extend4,extend5,extend6) values ('"
 							+ key_ + "','" + value_ + "','" + key + "','il8n');";
 					System.out.println(sql);
-					statement.execute(sql);
+					stmt.execute(sql);
 				}
 			}
-			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		} finally {
+            try { if (stmt != null) stmt.close(); } catch(Exception e) { }
+            try { if (conn != null) conn.close(); } catch(Exception e) { }
+        }
 	}
 
 	public static void initMemory(){
@@ -303,7 +264,6 @@ public class tools {
             try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
             try { if (conn != null) conn.close(); } catch(Exception ex) { }
         }
-
 	}
 
 	public static ArrayList list2Tree(ArrayList a_list) {
@@ -369,7 +329,7 @@ public class tools {
 		}
 	}
 
-	public static String configXML = null;
+	public static Document configXML = null;
 	public static String configXMLFileName = "config.xml";
 	public static String getConfigItem(String id) {
 		String item = "";
@@ -392,24 +352,17 @@ public class tools {
 				while ((s = br.read()) != -1) {
 					buffer.append((char) s);
 				}
-				tools.configXML = buffer.toString();
-				
+				tools.configXML = DocumentHelper.parseText( buffer.toString() );			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		try {
-			Document document = DocumentHelper.parseText(tools.configXML);
-			item = document.elementByID(id).getText();
-		} catch (DocumentException e) {
-			System.out.println(tools.configXML);
-			e.printStackTrace();
-		}
+		item = tools.configXML.elementByID(id).getText();
 
 		return item;
 	}
 	
-	public static String sqlXML = null;
+	public static Document sqlXML = null;
 	public static String getSQL(String id) {
 		String item = "";
 		if (tools.sqlXML == null) {
@@ -430,20 +383,13 @@ public class tools {
 				while ((s = br.read()) != -1) {
 					buffer.append((char) s);
 				}
-				tools.sqlXML = buffer.toString();
+				tools.sqlXML = DocumentHelper.parseText( buffer.toString() );
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		try {
-			Document document = DocumentHelper.parseText(tools.sqlXML);
-			item = document.elementByID(id).getText();
-		} catch (DocumentException e) {
-			System.out.println(tools.sqlXML);
-			e.printStackTrace();
-		}
-
+		item = tools.sqlXML.elementByID(id).getText();
 		return item;
 	}
 
