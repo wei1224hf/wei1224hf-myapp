@@ -503,7 +503,7 @@ public class oa_plan {
 		Statement stmt = null;
 		ResultSet rset = null;			
 		
-		String sql = tools.getConfigItem("oa_plan__grid");
+		String sql = tools.getSQL("oa_plan__grid");
 		String sql_orderby = " order by "+sortname+" "+sortorder;
 		String where = oa_plan.search(search,executor);	
 		String page = " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+" ";
@@ -706,7 +706,7 @@ public class oa_plan {
 		
 		try {
 			statement = conn.createStatement();	
-			sql = tools.getConfigItem("oa_plan__view").replace("__id__", "'"+id+"'");
+			sql = tools.getSQL("oa_plan__view").replace("__id__", "'"+id+"'");
 			System.out.println(sql);
 			ResultSet resultset = tools.getConn().createStatement().executeQuery(sql);
 			resultset.next();
@@ -804,7 +804,7 @@ public class oa_plan {
 		try {
 			statement = conn.createStatement();	
 		
-			sql =  tools.getConfigItem("oa_plan__gantt");
+			sql =  tools.getSQL("oa_plan__gantt");
 			String where = oa_plan.search(search,executor);	
 	
 			String sql_order = " order by oa_plan.code  ";
@@ -905,7 +905,7 @@ public class oa_plan {
 		try {
 			statement = conn.createStatement();	
 			
-			sql = tools.getConfigItem("oa_plan__statistics_time");
+			sql = tools.getSQL("oa_plan__statistics_time");
 			String where = " where 1=1 ";
 			sql = sql.replace("__size__", "7");
 			search = search.replace("%22", "\"");
@@ -1107,7 +1107,7 @@ public class oa_plan {
 	        	System.out.println(i);
 	        }
 	                
-			statement.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "oa_plan") );
+			statement.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "oa_plan") );
 	        statement.executeUpdate("COMMIT;");
 	
 	        t_return.put("status","1");
@@ -1151,7 +1151,7 @@ public class oa_plan {
 
 		String where = oa_plan.search(search,executor);	
 
-		sql = tools.getConfigItem("oa_plan__grid");
+		sql = tools.getSQL("oa_plan__grid");
 
 		
 		try {
@@ -1163,7 +1163,7 @@ public class oa_plan {
 			int i = 0;
 			String filename = String.valueOf(Math.random()*1000);
 
-			String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+			String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 			System.out.println(thepath);
 			book = Workbook.createWorkbook(new File(thepath));
 			WritableSheet sheet = book.createSheet("data_oa_plan", 0);		
@@ -1272,7 +1272,7 @@ public class oa_plan {
 		String sql = null;
 		
 		String where = " where  basic_user.id_person = oa_person.id		  ";
-		sql = tools.getConfigItem("oa_plan__usergrid");
+		sql = tools.getSQL("oa_plan__usergrid");
 
 		Hashtable search_t = new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
@@ -1341,7 +1341,7 @@ public class oa_plan {
 		String sql = null;
 		
 		String where = " where 1=1  ";
-		sql = tools.getConfigItem("oa_plan__quotesgrid");
+		sql = tools.getSQL("oa_plan__quotesgrid");
 
 		Hashtable search_t = new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
@@ -1398,7 +1398,7 @@ public class oa_plan {
 		String sql = null;
 		
 		String where = " where type = '21'  ";
-		sql = tools.getConfigItem("oa_plan__groupgrid");
+		sql = tools.getSQL("oa_plan__groupgrid");
 
 		Hashtable search_t = new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
@@ -1463,7 +1463,7 @@ public class oa_plan {
 			statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			statement3 = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			statement2 = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE );
-			if(page==1)statement2.executeUpdate("delete from oa_plan where code like '"+tools.getConfigItem("ZONE")+"%'");
+			if(page==1)statement2.executeUpdate("delete from oa_plan where code like '"+tools.getSQL("ZONE")+"%'");
 			
 			statement2.executeUpdate("START TRANSACTION;");
 			System.out.println(sql__depts);
@@ -1603,7 +1603,7 @@ public class oa_plan {
 					}
 				}				
 			}
-			statement2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "oa_plan") );
+			statement2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "oa_plan") );
 	        statement2.executeUpdate("COMMIT;");			
 		} catch (SQLException e1) {
 			e1.printStackTrace();

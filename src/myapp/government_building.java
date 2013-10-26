@@ -205,7 +205,7 @@ public class government_building {
 			}
 			t_return.put("zone_2", a);		
 			
-			String zone_4 = tools.getConfigItem("ZONE4");
+			String zone_4 = tools.getSQL("ZONE4");
 			sql = "select code,name as value from basic_group where code like  '"+zone_4+"__' order by code";
 			rset = stmt.executeQuery(sql);
 			a = new ArrayList();
@@ -217,7 +217,7 @@ public class government_building {
 			}
 			t_return.put("zone_6", a);		
 			
-			String zone_8 = tools.getConfigItem("ZONE8");		
+			String zone_8 = tools.getSQL("ZONE8");		
 			sql = "select code,name as value from basic_group where code like  '"+zone_8+"__' order by code";
 			rset = stmt.executeQuery(sql);
 			a = new ArrayList();
@@ -507,7 +507,7 @@ public class government_building {
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = tools.getConfigItem("government_building__view").replace("__id__", "'"+id+"'");
+			String sql = tools.getSQL("government_building__view").replace("__id__", "'"+id+"'");
 			System.out.println(sql);
 			rset = stmt.executeQuery(sql);
 			rset.next();
@@ -607,7 +607,7 @@ public class government_building {
 		String user_type = (String) t__user_session.get("user_type");
 		String user_groups = (String) t__user_session.get("groups");
 		
-		String sql = tools.getConfigItem("government_building__grid");
+		String sql = tools.getSQL("government_building__grid");
 		String sql_orderby = " order by "+sortname+" "+sortorder;
 		String where = government_building.search(search,user_type,executor,user_group);	
 		String page = " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+" ";
@@ -715,7 +715,7 @@ public class government_building {
 	        	stmt.executeUpdate(sqls[i-1]);
 	        }
         
-	        String Sql = tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_building") ;			
+	        String Sql = tools.getSQL("basic_memory__id_update").replace("__code__", "government_building") ;			
 	        stmt.executeUpdate(Sql );	        
 	        stmt.executeUpdate("COMMIT;");
 	        
@@ -751,13 +751,13 @@ public class government_building {
 		String user_type = (String) t__user_session.get("user_type");
 		String user_groups = (String) t__user_session.get("groups");
 		
-		String sql= tools.getConfigItem("government_building__grid");	
+		String sql= tools.getSQL("government_building__grid");	
 		String where = government_building.search(search,user_type,executor,group_code);
 		sql += where + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
 		System.out.println(sql);
 		
 		String filename = String.valueOf(Math.random()*1000);
-		String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+		String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 		
 		try {
 			stmt = conn.createStatement();
@@ -913,7 +913,7 @@ public class government_building {
 		try {
 			stmt = conn.createStatement();			
 			if(attribute.equals("zone")){
-				String syszone = tools.getConfigItem("ZONE");
+				String syszone = tools.getSQL("ZONE");
 				int len = syszone.length();
 				System.out.println((new Gson()).toJson(t_search));
 				if(t_search.containsKey("government_building__zone")){
@@ -992,7 +992,7 @@ public class government_building {
 		
 		Hashtable t_search = new Gson().fromJson(search, Hashtable.class);
 		
-		String syszone = tools.getConfigItem("ZONE");
+		String syszone = tools.getSQL("ZONE");
 		int len = syszone.length();
 		System.out.println((new Gson()).toJson(t_search));
 		if(t_search.containsKey("government_building__zone")){
@@ -1148,7 +1148,7 @@ public class government_building {
 				}	
 				
 			}
-	        stmt2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_building") );
+	        stmt2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "government_building") );
 	        stmt2.executeUpdate("COMMIT;");			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -1164,7 +1164,7 @@ public class government_building {
 		government_building.data4test(1);
 //		government_building.data4test(2);
 //		Hashtable t = government_building.download("{}", "10", "1", "10");/
-//		basic_group.upload(tools.getConfigItem("APPPATH")+"/file/developer/data_buildings.xls", "admin");
-//		government_building.upload(tools.getConfigItem("APPPATH")+"/file/developer/data_buildings.xls", "admin");
+//		basic_group.upload(tools.getSQL("APPPATH")+"/file/developer/data_buildings.xls", "admin");
+//		government_building.upload(tools.getSQL("APPPATH")+"/file/developer/data_buildings.xls", "admin");
 	}	
 }

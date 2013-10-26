@@ -27,7 +27,7 @@ var  config_path = ""
 	*/
 	
 	//JAVA 服务端
-    /*
+    
 	,config_path__basic_parameter__grid = "../jsp/myapp.jsp?class=basic_parameter&function=grid"
 	,config_path__basic_parameter__add = "../jsp/myapp.jsp?class=basic_parameter&function=add"
 	,config_path__basic_parameter__remove = "../jsp/myapp.jsp?class=basic_parameter&function=remove"
@@ -153,7 +153,7 @@ var  config_path = ""
 	,config_path__gis_polygon__remove =				"../jsp/myapp.jsp?class=gis_polygon&function=remove"
 		
 	,config_path__service_resource__qq_schools =   	"../jsp/myapp.jsp?class=service_resource&function=qq_schools"	
-    */
+    
 
 	//PHP 服务端
 	/*
@@ -182,7 +182,7 @@ var  config_path = ""
 	*/
 
     //C# 服务端
-	
+	/*
 	, config_path__basic_parameter__grid = "../aspx/myapp.aspx?class=basic_parameter&function=grid"
 	, config_path__basic_parameter__add = "../aspx/myapp.aspx?class=basic_parameter&function=add"
 	, config_path__basic_parameter__remove = "../aspx/myapp.aspx?class=basic_parameter&function=remove"
@@ -211,5 +211,5 @@ var  config_path = ""
 	, config_path__basic_group__permission_set = "../aspx/myapp.aspx?class=basic_group&function=permission_set"
 	, config_path__basic_group__grid = "../aspx/myapp.aspx?class=basic_group&function=grid"
 	, config_path__basic_group__loadConfig = "../aspx/myapp.aspx?class=basic_group&function=loadConfig"
-	
+	*/
 	;

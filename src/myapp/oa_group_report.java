@@ -344,7 +344,7 @@ public class oa_group_report {
 	public static Hashtable view(String id) throws SQLException {
 		Hashtable t_return = new Hashtable();
 		Statement statement = tools.getConn().createStatement();
-		String sql = tools.getConfigItem("government_zone_report__view")+" where id = '"+id+"'";
+		String sql = tools.getSQL("government_zone_report__view")+" where id = '"+id+"'";
 		System.out.println(sql);
 		ResultSet resultset = tools.getConn().createStatement().executeQuery(sql);
 		resultset.next();
@@ -431,7 +431,7 @@ public class oa_group_report {
 		
 		Hashtable t2 = new Hashtable();
 		
-		String sql = tools.getConfigItem("government_zone_report__grid");
+		String sql = tools.getSQL("government_zone_report__grid");
 		String orderby = " order by "+sortname+" "+sortorder;
 		String where = oa_group_report.search(search,user_type,executor,user_group);	
 		String page = " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+" ";
@@ -551,7 +551,7 @@ public class oa_group_report {
         }
         
 		try {
-	        String Sql = tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_zone") ;			
+	        String Sql = tools.getSQL("basic_memory__id_update").replace("__code__", "government_zone") ;			
 	        statement.executeUpdate(Sql );
 	        
 	        statement.executeUpdate("COMMIT;");
@@ -584,13 +584,13 @@ public class oa_group_report {
 		
 		Hashtable t_return = new Hashtable();
 		
-		String sql= tools.getConfigItem("government_zone__grid");	
+		String sql= tools.getSQL("government_zone__grid");	
 		String where = oa_group_report.search(search,user_type,executor,group_code);
 		sql += where + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
 		System.out.println(sql);
 		
 		String filename = String.valueOf(Math.random()*1000);
-		String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+		String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 		
 		Statement statement;
 		try {
@@ -731,7 +731,7 @@ public class oa_group_report {
 		try {
 			statement = tools.getConn().createStatement();			
 			if(attribute.equals("zone")){
-				String syszone = tools.getConfigItem("ZONE");
+				String syszone = tools.getSQL("ZONE");
 				int len = syszone.length();
 				System.out.println((new Gson()).toJson(t_search));
 				if(t_search.containsKey("government_zone__zone")){
@@ -800,7 +800,7 @@ public class oa_group_report {
 		
 		Hashtable t_search = new Gson().fromJson(search, Hashtable.class);
 		
-		String syszone = tools.getConfigItem("ZONE");
+		String syszone = tools.getSQL("ZONE");
 		int len = syszone.length();
 		System.out.println((new Gson()).toJson(t_search));
 		if(t_search.containsKey("government_zone__zone")){
@@ -996,8 +996,8 @@ public class oa_group_report {
 		oa_group_report.data4test(1);
 //		government_zone.data4test(2);
 //		Hashtable t = government_zone.download("{}", "10", "1", "10");/
-//		basic_group.upload(tools.getConfigItem("APPPATH")+"/file/developer/data_buildings.xls", "admin");
-//		government_zone.upload(tools.getConfigItem("APPPATH")+"/file/developer/data_buildings.xls", "admin");
+//		basic_group.upload(tools.getSQL("APPPATH")+"/file/developer/data_buildings.xls", "admin");
+//		government_zone.upload(tools.getSQL("APPPATH")+"/file/developer/data_buildings.xls", "admin");
 //		System.out.println(Math.pow(1.08333, 3));
 	}	
 }

@@ -505,7 +505,7 @@ public class basic_user {
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = tools.getConfigItem("basic_user__view").replace("__id__", "'"+id+"'");
+			String sql = tools.getSQL("basic_user__view").replace("__id__", "'"+id+"'");
 			rset = stmt.executeQuery(sql);
 			rset.next();
 			ResultSetMetaData m = rset.getMetaData();
@@ -591,7 +591,7 @@ public class basic_user {
 		
 		String sql = "";
 		String where = search(search,user_type,executor,user_group);	
-		sql = tools.getConfigItem("basic_user__grid");
+		sql = tools.getSQL("basic_user__grid");
 		
 		sql += where + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
 		t_return.put("sql", sql);
@@ -681,7 +681,7 @@ public class basic_user {
 			}else{
 				md5PasswordTime = "'"+md5PasswordTime+"'";
 			}
-			sql = tools.getConfigItem("basic_user__login_check").replace("__username__", "'"+username+"'").replace("__password__", md5PasswordTime);
+			sql = tools.getSQL("basic_user__login_check").replace("__username__", "'"+username+"'").replace("__password__", md5PasswordTime);
 			System.out.println(sql);
 			rset = stmt.executeQuery(sql);
 			if(!rset.next()){
@@ -716,9 +716,9 @@ public class basic_user {
 				t_return.put("il8n", tools.readIl8n());
 				t_return.put("zone", tools.getConfigItem("ZONE"));
 				
-				sql = tools.getConfigItem("basic_user__login_logout").replace("__user_code__", "'"+username+"'");
+				sql = tools.getSQL("basic_user__login_logout").replace("__user_code__", "'"+username+"'");
 				stmt.executeUpdate(sql);
-				sql = tools.getConfigItem("basic_user__login_session");
+				sql = tools.getSQL("basic_user__login_session");
 				sql = sql.replace("__username__", "'"+username+"'" );
 				sql = sql.replace("__permissions__", "'"+basic_user.getPermission(username)+"'" );
 				sql = sql.replace("__session__", "'"+session+"'" );
@@ -760,7 +760,7 @@ public class basic_user {
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = tools.getConfigItem("basic_user__logout").replace("__user_code__", "'"+username+"'").replace("__session__", "'"+session+"'");
+			String sql = tools.getSQL("basic_user__logout").replace("__user_code__", "'"+username+"'").replace("__session__", "'"+session+"'");
 			stmt.executeUpdate(sql);
 			t_return.put("status", "1");
 			t_return.put("msg", "ok");
@@ -783,7 +783,7 @@ public class basic_user {
 		ResultSet rset = null;
 		
 		String r_session = tools.MD5( String.valueOf( Math.random()*1000 ) );
-		String sql = tools.getConfigItem("basic_user__session_update")
+		String sql = tools.getSQL("basic_user__session_update")
 				.replace("__user_code__", "'"+user_code+"'")
 				.replace("__r_session__", "'"+r_session+"'")
 				.replace("__session__", "'"+session+"'");
@@ -812,7 +812,7 @@ public class basic_user {
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;		
-		String sql = tools.getConfigItem("basic_user__getPermission").replace("__username__", "'"+username+"'");
+		String sql = tools.getSQL("basic_user__getPermission").replace("__username__", "'"+username+"'");
 		
 		try {
 			stmt = conn.createStatement();
@@ -838,7 +838,7 @@ public class basic_user {
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;	
-		String sql = tools.getConfigItem("basic_user__getPermission");
+		String sql = tools.getSQL("basic_user__getPermission");
 		sql = sql.replace("__username__", "'"+username+"'");
 
 		try{
@@ -911,7 +911,7 @@ public class basic_user {
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = tools.getConfigItem("basic_user__group_get").replace("__username__", "'"+username+"'");
+			String sql = tools.getSQL("basic_user__group_get").replace("__username__", "'"+username+"'");
 			rset = stmt.executeQuery(sql);	
 			
 			ArrayList array = new ArrayList();
@@ -955,7 +955,7 @@ public class basic_user {
 		}else{
 			session = "'"+session+"'";
 		}
-		String sql = tools.getConfigItem("basic_user__checkPermission")
+		String sql = tools.getSQL("basic_user__checkPermission")
 				.replace("__user_code__", "'"+user_code+"'")
 				.replace("__session__", session)
 				.replace("__actioncode__", actioncode);
@@ -979,7 +979,7 @@ public class basic_user {
 	 * 比如 业务逻辑权限 验证
 	 * */
 	public static Boolean checkPermission(String user_code,String actioncode) throws SQLException  {
-		String sql = tools.getConfigItem("basic_user__checkPermission")
+		String sql = tools.getSQL("basic_user__checkPermission")
 				.replace("__user_code__", "'"+user_code+"'")
 				.replace("__session__", "session")
 				.replace("__actioncode__", actioncode);
@@ -1054,7 +1054,7 @@ public class basic_user {
 		ResultSet rset = null;
 		
 		try {
-			String zone = tools.getConfigItem("ZONE");
+			String zone = tools.getSQL("ZONE");
 			stmt = tools.getConn().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			stmt2 = tools.getConn().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE );
 			stmt2.executeUpdate("DELETE FROM basic_user where username like '"+zone+"%';");
@@ -1139,8 +1139,8 @@ public class basic_user {
 
 			}
 			stmt2.executeUpdate("COMMIT;");
-			stmt2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "basic_user") );
-			stmt2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "oa_person") );
+			stmt2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "basic_user") );
+			stmt2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "oa_person") );
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1173,17 +1173,17 @@ public class basic_user {
 //		System.out.println(basic_user.updateSession("admin", "8335c8a44e325d04b1d83046c6537969"));	
 //		System.out.println(basic_user.view("1"));	
 		
-//		basic_group.upload( tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data__jxgz.xls", "admin");
+//		basic_group.upload( tools.getSQL("APPPATH")+"/file/developer/tables_community_data__jxgz.xls", "admin");
 //		basic_user.login("admin", tools.MD5(tools.MD5("admin")+(new Date()).getHours()), "1", "1");
-//		oa_plan.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
-//		community_socialworker.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
-//		government_building.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
-//		government_family.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
-//		government_resident.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
-//		government_company.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		oa_plan.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		community_socialworker.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		government_building.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		government_family.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		government_resident.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		government_company.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
 
-//		community_visit.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
-//		community_affair.upload(tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		community_visit.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
+//		community_affair.upload(tools.getSQL("APPPATH")+"/file/developer/tables_community_data.xls", "admin");
 //		tools.initMemory();
 		basic_user.data4test();
 	}	

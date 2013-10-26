@@ -306,7 +306,7 @@ public class oa_person {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		String sql = tools.getConfigItem("oa_person__view").replace("__id__", "'"+id+"'");
+		String sql = tools.getSQL("oa_person__view").replace("__id__", "'"+id+"'");
 		System.out.println(sql);
 		ResultSet resultset;
 		try {

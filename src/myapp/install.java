@@ -318,7 +318,7 @@ public class install {
 		return t_return;
 	}
 
-	public static Hashtable inserts() {
+	public static Hashtable step4() {
 		Hashtable t_return = new Hashtable();
 
 		basic_group.upload(tools.getConfigItem("APPPATH")

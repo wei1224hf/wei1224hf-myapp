@@ -150,7 +150,7 @@ public class government_family {
 		String sql = "";
 		
 		try {
-			String zone = tools.getConfigItem("ZONE4");
+			String zone = tools.getSQL("ZONE4");
 			sql = "select code,name as value from basic_group where code like  '"+zone+"__' order by code";
 			statement = conn.createStatement();
 			rs = statement.executeQuery(sql);
@@ -343,7 +343,7 @@ public class government_family {
 	public static Hashtable view(String id) throws SQLException {
 		Hashtable t_return = new Hashtable();
 		Statement statement = tools.getConn().createStatement();
-		String sql = tools.getConfigItem("government_family__view").replace("__id__", "'"+id+"'");
+		String sql = tools.getSQL("government_family__view").replace("__id__", "'"+id+"'");
 		System.out.println(sql);
 		ResultSet resultset = tools.getConn().createStatement().executeQuery(sql);
 		resultset.next();
@@ -427,7 +427,7 @@ public class government_family {
 		String user_type = (String) t__user_session.get("user_type");
 		String user_groups = (String) t__user_session.get("groups");
 		
-		String sql = tools.getConfigItem("government_family__grid");
+		String sql = tools.getSQL("government_family__grid");
 		String sql_orderby = " order by "+sortname+" "+sortorder;
 		String where = government_family.search(search,user_type,executor,user_group);	
 		sql += where + sql_orderby + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
@@ -532,7 +532,7 @@ public class government_family {
 
 	        }
 	        
-	        String Sql = tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_family") ;			
+	        String Sql = tools.getSQL("basic_memory__id_update").replace("__code__", "government_family") ;			
 	        statement.executeUpdate(Sql );
 
 	        statement.executeUpdate("COMMIT;");
@@ -577,7 +577,7 @@ public class government_family {
 		String user_type = (String) t__user_session.get("user_type");
 		String user_groups = (String) t__user_session.get("groups");
 		
-		String sql = tools.getConfigItem("government_family__grid");
+		String sql = tools.getSQL("government_family__grid");
 		String sql_orderby = " order by "+sortname+" "+sortorder;
 		String where = government_family.search(search,user_type,executor,user_group);	
 		sql += where + sql_orderby + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
@@ -590,7 +590,7 @@ public class government_family {
 			int i = 0;
 
 
-				String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+				String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 				System.out.println(thepath);
 				book = Workbook.createWorkbook(new File(thepath));
 				WritableSheet sheet = book.createSheet("data_government_family", 0);		
@@ -725,7 +725,7 @@ public class government_family {
 					}
 				}				
 			}
-	        statement2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_family") );
+	        statement2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "government_family") );
 	        statement2.executeUpdate("COMMIT;");			
 		} catch (SQLException e1) {
 			e1.printStackTrace();

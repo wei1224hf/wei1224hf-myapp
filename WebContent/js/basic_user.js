@@ -70,7 +70,10 @@ var basic_user = {
 				}
 			},
 			submitHandler: function () {
-				basic_user.login($('#username').val(), MD5( MD5( $('#password').val() ) +((new Date()).getHours())) ,"top.desktop.loadIcons();top.$.ligerui.get('win_10').close();");
+				var md5_pwd = MD5( $('#password').val() );
+				var hour = ((new Date()).getHours());
+				console.debug(md5_pwd +" "+ hour);
+				basic_user.login($('#username').val(), MD5( md5_pwd + hour ) ,"top.desktop.loadIcons();top.$.ligerui.get('win_10').close();");
 			}
 		});
 	}

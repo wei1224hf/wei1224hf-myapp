@@ -318,7 +318,7 @@ public class oa_work {
 		try {
 			
 			stmt = conn.createStatement();
-			String sql = tools.getConfigItem("oa_work__view").replace("__id__", "'"+id+"'");
+			String sql = tools.getSQL("oa_work__view").replace("__id__", "'"+id+"'");
 			System.out.println(sql);
 			rset = stmt.executeQuery(sql);
 			rset.next();
@@ -364,7 +364,7 @@ public class oa_work {
 		Statement stmt = null;
 		ResultSet rset = null;	
 		
-		String sql = tools.getConfigItem("oa_work__grid");
+		String sql = tools.getSQL("oa_work__grid");
 		String sql_orderby = " order by "+sortname+" "+sortorder;
 		String where = oa_work.search(search,executor);		
 		sql += where + sql_orderby + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
@@ -414,7 +414,7 @@ public class oa_work {
 			Hashtable t_return = new Hashtable();
 			String sql = "";
 			String where = " where 1=1 ";
-			sql = tools.getConfigItem("oa_work__grid");
+			sql = tools.getSQL("oa_work__grid");
 			if(!user_type.equals("10")){
 				where = " where creater_code = '"+executor+"' ";
 			}
@@ -449,7 +449,7 @@ public class oa_work {
 			try {
 				statement = tools.getConn().createStatement();
 				rs = statement.executeQuery(sql);
-				String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+				String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 				System.out.println(thepath);
 				book = Workbook.createWorkbook(new File(thepath));
 				WritableSheet sheet = book.createSheet("data_oa_work", 0);
@@ -512,7 +512,7 @@ public class oa_work {
 			statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			statement3 = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			statement2 = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE );
-//			statement2.executeUpdate("delete from oa_work where code like '"+tools.getConfigItem("ZONE")+"%'");
+//			statement2.executeUpdate("delete from oa_work where code like '"+tools.getSQL("ZONE")+"%'");
 			statement2.executeUpdate("START TRANSACTION;");
 
 	        int id__oa_work = tools.getTableId("oa_work");
@@ -590,7 +590,7 @@ public class oa_work {
 					
 					div_++;
 			}
-			statement2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "oa_work") );
+			statement2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "oa_work") );
 	        statement2.executeUpdate("COMMIT;");			
 		} catch (SQLException e1) {
 			System.out.println(page);

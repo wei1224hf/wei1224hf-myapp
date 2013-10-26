@@ -208,14 +208,12 @@ public class tools {
 				File file = new File(path);
 				File[] files = file.listFiles();
 				for (File fl : files) {
-					if (fl.isDirectory())
-						continue;
+					if (fl.isDirectory())continue;
+						
 					String path2 = path + fl.getName();
 					System.out.println(path2);
 
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(new FileInputStream(path2),
-									"utf-8"));
+					BufferedReader reader = new BufferedReader( new InputStreamReader(new FileInputStream(path2), "utf-8"));
 
 					String line;
 					HashMap current = new HashMap();
@@ -226,8 +224,7 @@ public class tools {
 						line = line.trim();
 						// System.out.println(line.toString());
 						if (line.matches("\\[.*\\]")) {
-							currentSecion = line.replaceFirst("\\[(.*)\\]",
-									"$1");
+							currentSecion = line.replaceFirst("\\[(.*)\\]", "$1");
 							// System.out.println(currentSecion);
 
 						} else if (line.matches(".*=.*")) {
@@ -275,17 +272,22 @@ public class tools {
 			}
 			statement.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public static void initMemory(){
-		tools.importIl8n2DB();
 		Statement stmt = null;
 		Connection conn = tools.getConn();
-		String sql = tools.getSQL("basic_memory__init");
+		String sql = "delete from basic_memory;";
+		try {
+			conn.createStatement().executeUpdate(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		tools.importIl8n2DB();
+
+		sql = tools.getSQL("basic_memory__init");
 		String[] sql_ = sql.split(";");
 		
 		try {
@@ -310,160 +312,31 @@ public class tools {
 		for (int i = 0; i < a_list.size(); i++) {
 			Hashtable t = (Hashtable) a_list.get(i);
 			int len = ((String) t.get("code")).length();
-
-			int pos_1, pos_2, pos_3, pos_4, pos_5, pos_6 = 0;
-
-			if (len == 2) {
+			if(len==2){
 				a_return.add(t);
-			} else if (len == 4) {
-				pos_1 = a_return.size() - 1;
-
-				Hashtable t_ = (Hashtable) a_return.get(pos_1);
-
-				ArrayList a_ = new ArrayList();
-				if (t_.containsKey("children")) {
-					a_ = (ArrayList) t_.get("children");
-				}
-				a_.add(t);
-				t_.put("children", a_);
-
-				a_return.set(pos_1, t_);
-			} else if (len == 6) {
-				pos_1 = a_return.size() - 1;
-				pos_2 = ((ArrayList) ((Hashtable) a_return.get(pos_1))
-						.get("children")).size() - 1;
-
-				Hashtable t_ = (Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2);
-
-				ArrayList a_ = new ArrayList();
-				if (t_.containsKey("children")) {
-					a_ = (ArrayList) t_.get("children");
-				}
-				a_.add(t);
-				t_.put("children", a_);
-
-				((ArrayList) ((Hashtable) a_return.get(pos_1)).get("children"))
-						.set(pos_2, t_);
-			} else if (len == 8) {
-				pos_1 = a_return.size() - 1;
-				pos_2 = ((ArrayList) ((Hashtable) a_return.get(pos_1))
-						.get("children")).size() - 1;
-				pos_3 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).size() - 1;
-
-				Hashtable t_ = (Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3);
-
-				ArrayList a_ = new ArrayList();
-				if (t_.containsKey("children")) {
-					a_ = (ArrayList) t_.get("children");
-				}
-				a_.add(t);
-				t_.put("children", a_);
-
-				((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).set(pos_3, t_);
-			} else if (len == 10) {
-				pos_1 = a_return.size() - 1;
-				pos_2 = ((ArrayList) ((Hashtable) a_return.get(pos_1))
-						.get("children")).size() - 1;
-				pos_3 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).size() - 1;
-				pos_4 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children")).size() - 1;
-
-				Hashtable t_ = (Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4);
-
-				ArrayList a_ = new ArrayList();
-				if (t_.containsKey("children")) {
-					a_ = (ArrayList) t_.get("children");
-				}
-				a_.add(t);
-				t_.put("children", a_);
-
-				((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children")).set(
-						pos_4, t_);
-			} else if (len == 12) {
-				pos_1 = a_return.size() - 1;
-				pos_2 = ((ArrayList) ((Hashtable) a_return.get(pos_1))
-						.get("children")).size() - 1;
-				pos_3 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).size() - 1;
-				pos_4 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children")).size() - 1;
-				pos_5 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).size() - 1;
-
-				Hashtable t_ = (Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).get(pos_5);
-
-				ArrayList a_ = new ArrayList();
-				if (t_.containsKey("children")) {
-					a_ = (ArrayList) t_.get("children");
-				}
-				a_.add(t);
-				t_.put("children", a_);
-
-				((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).set(pos_5, t_);
-			} else if (len == 14) {
-				pos_1 = a_return.size() - 1;
-				pos_2 = ((ArrayList) ((Hashtable) a_return.get(pos_1))
-						.get("children")).size() - 1;
-				pos_3 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).size() - 1;
-				pos_4 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children")).size() - 1;
-				pos_5 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).size() - 1;
-				pos_6 = ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).get(pos_5))
-						.get("children")).size() - 1;
-
-				Hashtable t_ = (Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).get(pos_5))
-						.get("children")).get(pos_6);
-
-				ArrayList a_ = new ArrayList();
-				if (t_.containsKey("children")) {
-					a_ = (ArrayList) t_.get("children");
-				}
-				a_.add(t);
-				t_.put("children", a_);
-
-				((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) ((ArrayList) ((Hashtable) a_return
-						.get(pos_1)).get("children")).get(pos_2))
-						.get("children")).get(pos_3)).get("children"))
-						.get(pos_4)).get("children")).get(pos_5))
-						.get("children")).set(pos_6, t_);
+				continue;
 			}
+			
+			ArrayList aa = new ArrayList();
+			aa.add(a_return);
+			
+			for(int i2=2;i2<len;i2+=2){
+				ArrayList a = (ArrayList) aa.get(aa.size()-1);
+				int p = a.size()-1;
+				
+				Hashtable item = (Hashtable) a.get(p);
+				if(!item.containsKey("children")){
+					item.put("children", new ArrayList());
+				}
+				
+				aa.add(item.get("children"));
+			}
+			((ArrayList) aa.get(aa.size()-1)).add(t);
+
+			for(int i3=aa.size()-1;i3>0;i3--){
+			    ((Hashtable) ((ArrayList)(aa.get(i3-1))).get(((ArrayList)aa.get(i3-1)).size()-1)).put("children", aa.get(i3));
+            }
+			a_return = (ArrayList) aa.get(0);
 		}
 
 		return a_return;
@@ -497,12 +370,14 @@ public class tools {
 	}
 
 	public static String configXML = null;
+	public static String configXMLFileName = "config.xml";
 	public static String getConfigItem(String id) {
 		String item = "";
 		if (tools.configXML == null) {
 			try {
 				String path = tools.class.getClassLoader().getResource("")
-						+ "../../config.xml";
+						+ "../../"+tools.configXMLFileName;
+				System.out.println(path);
 				if(System.getProperty("os.name").contains("Windows")){
 					path = path.substring(6);
 				}else{
@@ -776,6 +651,27 @@ public class tools {
 		// System.out.println(tools.getTableId("basic_user"));
 //		System.out.println(System.getProperty("os.name"));
 
-		tools.initMemory();
+//		tools.initMemory();
+		ArrayList a = new ArrayList();
+		Hashtable t1 = new Hashtable();
+		t1.put("code", "11");
+		a.add(t1);
+		t1 = new Hashtable();
+		t1.put("code", "12");
+		a.add(t1);
+		t1 = new Hashtable();
+		t1.put("code", "1201");
+		a.add(t1);
+		t1 = new Hashtable();
+		t1.put("code", "120101");
+		a.add(t1);
+		t1 = new Hashtable();
+		t1.put("code", "120102");
+		a.add(t1);
+		t1 = new Hashtable();
+		t1.put("code", "13");
+		a.add(t1);
+		
+		System.out.println( new Gson().toJson( tools.list2Tree(a) ) );
 	}
 }

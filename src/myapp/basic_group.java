@@ -172,7 +172,7 @@ public class basic_group {
 		ResultSet rset = null;
 		
 		String where = " where 1=1 ";
-		String sql = tools.getConfigItem("basic_group__grid");
+		String sql = tools.getSQL("basic_group__grid");
 		Hashtable search_t = (Hashtable) new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
 			String key = (String) it.next();
@@ -425,7 +425,7 @@ public class basic_group {
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = tools.getConfigItem("basic_group__permission_get").replace("__group_code__", "'"+code+"'");
+			String sql = tools.getSQL("basic_group__permission_get").replace("__group_code__", "'"+code+"'");
 			rset = stmt.executeQuery(sql);	
 			System.out.println(sql);
 			ArrayList array = new ArrayList();
@@ -689,7 +689,7 @@ public class basic_group {
 	//每一级下级为6个到10个子区划
 	//市级区划中: 行政中心,公安,法院,检察院,
 	public static void data4test2(){
-		String code__zone_6 = tools.getConfigItem("ZONE");//余姚
+		String code__zone_6 = tools.getSQL("ZONE");//余姚
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -878,7 +878,7 @@ public class basic_group {
 //		System.out.println(new Gson().toJson(basic_group.view("1")));	
 //		System.out.println(new Gson().toJson(basic_group.permission_get("10")));		
 //		System.out.println(new Gson().toJson(basic_group.remove("10","admin")));	
-//		basic_group.upload( tools.getConfigItem("APPPATH")+"/file/developer/tables_community_data_2.xls", "admin");
+//		basic_group.upload( tools.getSQL("APPPATH")+"/file/developer/tables_community_data_2.xls", "admin");
 //		basic_group.data4test();
 //		System.out.println( 
 //				new Gson().toJson( (basic_group.grid("{}", "10", "10", "admin", "id", "desc") ) )

@@ -28,9 +28,9 @@ if(function.equals("step3")){
 	print = gson.toJson( install.step3() );
 }
 
-if(function.equals("insert")){
+if(function.equals("step4")){
 	install.path = path;
-	print = gson.toJson( install.inserts() );
+	print = gson.toJson( install.step4() );
 }
 
 if(function.equals("basic_group")){

@@ -380,7 +380,7 @@ public class government_company {
 		LinkedHashMap t_data = new LinkedHashMap();
 		try {
 			Statement statement = tools.getConn().createStatement();
-			String sql = tools.getConfigItem("government_company__view").replace("__id__", "'"+id+"'");
+			String sql = tools.getSQL("government_company__view").replace("__id__", "'"+id+"'");
 			System.out.println(sql);
 			ResultSet resultset = tools.getConn().createStatement().executeQuery(sql);
 			resultset.next();
@@ -470,7 +470,7 @@ public class government_company {
 		Hashtable t2 = new Hashtable();
 		String sql = "";
 		String where = search(search,user_type,executor,user_group);	
-		sql = tools.getConfigItem("government_company__grid");
+		sql = tools.getSQL("government_company__grid");
 		
 		sql += where + " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+";";
 		Statement statement;
@@ -600,7 +600,7 @@ public class government_company {
         }
 
 		try {
-	        statement.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_company") );
+	        statement.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "government_company") );
 	        statement.executeUpdate("COMMIT;");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -623,7 +623,7 @@ public class government_company {
 		String sql = "";
 		String where = " where 1=1 ";
 		if(user_type.equals("10")){
-			sql = tools.getConfigItem("government_company__grid");
+			sql = tools.getSQL("government_company__grid");
 		}
 		Hashtable search_t = new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
@@ -651,7 +651,7 @@ public class government_company {
 		int i = 0;
 		String filename = String.valueOf(Math.random()*1000);
 		try {
-			String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+			String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 			System.out.println(thepath);
 			book = Workbook.createWorkbook(new File(thepath));
 			WritableSheet sheet = book.createSheet("data_government_company", 0);		
@@ -779,7 +779,7 @@ public class government_company {
 					}
 				}				
 			}
-	        statement2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_company") );
+	        statement2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "government_company") );
 	        statement2.executeUpdate("COMMIT;");			
 		} catch (SQLException e1) {
 			e1.printStackTrace();

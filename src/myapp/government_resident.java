@@ -385,7 +385,7 @@ public class government_resident {
 	public static Hashtable view(String id) throws SQLException {
 		Hashtable t_return = new Hashtable();
 		Statement stmt = tools.getConn().createStatement();
-		String sql = tools.getConfigItem("government_resident__view").replace("__id__", "'"+id+"'");
+		String sql = tools.getSQL("government_resident__view").replace("__id__", "'"+id+"'");
 		System.out.println(sql);
 		ResultSet resultset = tools.getConn().createStatement().executeQuery(sql);
 		resultset.next();
@@ -460,7 +460,7 @@ public class government_resident {
 		
 		Hashtable t2 = new Hashtable();
 		
-		String sql = tools.getConfigItem("government_resident__grid");
+		String sql = tools.getSQL("government_resident__grid");
 		String orderby = " order by "+sortname+" "+sortorder;
 		String where = government_resident.search(search,user_type,executor,user_group);	
 		String page = " limit "+(Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+","+pagesize+" ";
@@ -615,9 +615,9 @@ public class government_resident {
         }
 
 		try {
-	        String Sql = tools.getConfigItem("basic_memory__id_update").replace("__code__", "oa_person") ;			
+	        String Sql = tools.getSQL("basic_memory__id_update").replace("__code__", "oa_person") ;			
 	        stmt.executeUpdate(Sql );
-	        stmt.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_resident") );
+	        stmt.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "government_resident") );
 	        
 	        stmt.executeUpdate("COMMIT;");
 		} catch (SQLException e) {
@@ -641,7 +641,7 @@ public class government_resident {
 		String sql = "";
 		String where = " where 1=1 ";
 		if(user_type.equals("10")){
-			sql = tools.getConfigItem("government_resident__grid");
+			sql = tools.getSQL("government_resident__grid");
 		}
 		Hashtable search_t = new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
@@ -669,7 +669,7 @@ public class government_resident {
 		int i = 0;
 		String filename = String.valueOf(Math.random()*1000);
 		try {
-			String thepath = tools.getConfigItem("APPPATH")+"\\file\\download\\"+filename+".xls";
+			String thepath = tools.getSQL("APPPATH")+"\\file\\download\\"+filename+".xls";
 			System.out.println(thepath);
 			book = Workbook.createWorkbook(new File(thepath));
 			WritableSheet sheet = book.createSheet("data_government_resident", 0);		
@@ -862,8 +862,8 @@ public class government_resident {
 					}
 				}				
 			}
-	        stmt2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "government_resident") );
-	        stmt2.executeUpdate( tools.getConfigItem("basic_memory__id_update").replace("__code__", "oa_person") );
+	        stmt2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "government_resident") );
+	        stmt2.executeUpdate( tools.getSQL("basic_memory__id_update").replace("__code__", "oa_person") );
 	        stmt2.executeUpdate("COMMIT;");		
 	        
 	        stmt2.close();
