@@ -449,7 +449,7 @@ public class tools {
 
 	public static int getTableId(String table) {
 		int id = 0;
-		String sql = tools.getConfigItem("basic_memory__id").replace(
+		String sql = tools.getSQL("basic_memory__id").replace(
 				"__code__", "'" + table + "'");
 		
 		Connection conn = tools.getConn();
@@ -461,7 +461,7 @@ public class tools {
 			rset.next();
 			id = rset.getInt("id");
 			stmt.executeUpdate(
-					tools.getConfigItem("basic_memory__id_add").replace("__code__",
+					tools.getSQL("basic_memory__id_add").replace("__code__",
 							"'" + table + "'"));
 			id++;
 		} catch (SQLException e) {			

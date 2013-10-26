@@ -688,8 +688,8 @@ public class basic_group {
 	//市的行政区划编码为6位
 	//每一级下级为6个到10个子区划
 	//市级区划中: 行政中心,公安,法院,检察院,
-	public static void data4test2(){
-		String code__zone_6 = tools.getSQL("ZONE");//余姚
+	public static void simulate(){
+		String code__zone_6 = tools.getConfigItem("ZONE");//余姚
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -759,25 +759,25 @@ public class basic_group {
 					String code__z8dp = code__z8+"-"+(10+i1);
 					
 					String sql_zone8_dep = "insert into basic_group ("
-						+"name,"
-						+"code,"
-						+"count_users,"
-						+"type,"
-						+"status,"
-						+"remark,"
-						+"chief,"
-						+"chief_cellphone,"
-						+"phone"
+							+"name,"
+							+"code,"
+							+"count_users,"
+							+"type,"
+							+"status,"
+							+"remark,"
+							+"chief,"
+							+"chief_cellphone,"
+							+"phone"
 						+")values("
-						+"'"+name+departments__zone_8[i1]+"',"
-						+"'"+code__z8dp+"',"
-						+"0,"
-						+"'"+departments__zone_8__type[i1]+"',"
-						+"10,"
-						+"'说明描述,内容应该很长很长,含有HTML标签,比如回车<br/>还有图片<img src=\"http://img.baidu.com/img/iknow/docshare/icon_s_vip.png\"/>',"
-						+"'"+tools.randomName()+"',"
-						+"'13456"+(int)(Math.random()*1000000+1000000)+"',"
-						+"'111111111'"
+							+"'"+name+departments__zone_8[i1]+"',"
+							+"'"+code__z8dp+"',"
+							+"0,"
+							+"'"+departments__zone_8__type[i1]+"',"
+							+"10,"
+							+"'说明描述,内容应该很长很长,含有HTML标签,比如回车<br/>还有图片<img src=\"http://img.baidu.com/img/iknow/docshare/icon_s_vip.png\"/>',"
+							+"'"+tools.randomName()+"',"
+							+"'13456"+(int)(Math.random()*1000000+1000000)+"',"
+							+"'111111111'"
 						+")";
 					stmt.execute(sql_zone8_dep);
 				}
@@ -802,25 +802,25 @@ public class basic_group {
 						String code__z10dp = code__z10+"-"+(10+i3);
 						
 						String sql_zone8_dep = "insert into basic_group ("
-							+"name,"
-							+"code,"
-							+"count_users,"
-							+"type,"
-							+"status,"
-							+"remark,"
-							+"chief,"
-							+"chief_cellphone,"
-							+"phone"
+								+"name,"
+								+"code,"
+								+"count_users,"
+								+"type,"
+								+"status,"
+								+"remark,"
+								+"chief,"
+								+"chief_cellphone,"
+								+"phone"
 							+")values("
-							+"'"+name+departments__zone_10[i3]+"',"
-							+"'"+code__z10dp+"',"
-							+"0,"
-							+"'"+departments__zone_10__type[i3]+"',"
-							+"10,"
-							+"'说明描述,内容应该很长很长,含有HTML标签,比如回车<br/>还有图片<img src=\"http://img.baidu.com/img/iknow/docshare/icon_s_vip.png\"/>',"
-							+"'"+tools.randomName()+"',"
-							+"'13456"+(int)(Math.random()*1000000+1000000)+"',"
-							+"'111111111'"
+								+"'"+name+departments__zone_10[i3]+"',"
+								+"'"+code__z10dp+"',"
+								+"0,"
+								+"'"+departments__zone_10__type[i3]+"',"
+								+"10,"
+								+"'说明描述,内容应该很长很长,含有HTML标签,比如回车<br/>还有图片<img src=\"http://img.baidu.com/img/iknow/docshare/icon_s_vip.png\"/>',"
+								+"'"+tools.randomName()+"',"
+								+"'13456"+(int)(Math.random()*1000000+1000000)+"',"
+								+"'111111111'"
 							+")";
 						stmt.execute(sql_zone8_dep);
 					}
@@ -883,7 +883,7 @@ public class basic_group {
 //		System.out.println( 
 //				new Gson().toJson( (basic_group.grid("{}", "10", "10", "admin", "id", "desc") ) )
 //				);
-		basic_group.data4test2();
+		basic_group.simulate();
 //		basic_user.data4test();
 //		oa_plan.data4test(1);
 	}	

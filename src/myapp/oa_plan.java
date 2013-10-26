@@ -1463,7 +1463,7 @@ public class oa_plan {
 			statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			statement3 = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
 			statement2 = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE );
-			if(page==1)statement2.executeUpdate("delete from oa_plan where code like '"+tools.getSQL("ZONE")+"%'");
+			if(page==1)statement2.executeUpdate("delete from oa_plan where code like '"+tools.getConfigItem("ZONE")+"%'");
 			
 			statement2.executeUpdate("START TRANSACTION;");
 			System.out.println(sql__depts);

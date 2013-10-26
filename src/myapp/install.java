@@ -391,7 +391,7 @@ public class install {
 
 	public static Hashtable basic_group() {
 		Hashtable t_return = new Hashtable();
-		basic_group.data4test2();
+		basic_group.simulate();
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;
