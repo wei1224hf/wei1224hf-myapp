@@ -244,7 +244,11 @@
 			});
 		}		
 
-		var basic_data = function() {
+		
+		var urls_5 = [
+					server_path+"?class=install&function=step5_"
+		              ];
+		var step5 = function() {
 			$('#btn_basic_data').attr("disabled", true);
 			$.ajax({
 				url : server_path+"?class=install&function=basic_data",
@@ -319,6 +323,14 @@
 		<div class="directions_step"></div>
 		<div class='log'></div>
 	</fieldset>
+	
+	<fieldset class='f_step'>
+		<legend>
+			<button onclick="step5()" class='btn_step'></button>
+		</legend>
+		<div class="directions_step"></div>
+		<div class='log'></div>
+	</fieldset>	
 
 </body>
 </html>
