@@ -237,7 +237,7 @@ public class install {
 		Hashtable t_return = new Hashtable();
 		String rootpath = tools.getConfigItem("APPPATH");
 		String filePath = rootpath
-				+ "\\file\\developer\\tables_community-3.xls";
+				+ "\\file\\sql.xls";
 		InputStream fs = null;
 		Workbook workBook = null;
 
@@ -295,6 +295,7 @@ public class install {
 				index++;
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 			t_return.put("status", "2");
 			t_return.put("msg", e.toString());
 			return t_return;
