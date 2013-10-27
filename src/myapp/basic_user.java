@@ -124,7 +124,6 @@ public class basic_user {
 			}else if(functionName.equals("updateSession")){
 				t.put("session", updateSession(executor,session) );				
 			}else if(functionName.equals("checkUsernameUsed")){
-				//TODO
 				t.put("status", "1");
 				t.put("msg", "ok");			
 			}else if(functionName.equals("group_get")){
@@ -140,8 +139,6 @@ public class basic_user {
 				}				
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
 			e.printStackTrace();
 		}		
 		
@@ -962,36 +959,61 @@ public class basic_user {
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;
-		ResultSet rs = conn.createStatement().executeQuery(sql);
-		if(rs.next()){
-
-			sql = "update basic_user_session set lastaction = '"+actioncode+"' , lastactiontime = now() , count_actions = count_actions + 1 where user_code = '"+user_code+"' ;";
-			conn.createStatement().executeUpdate(sql);
-			rs.close();
-			return true;
-		}else{
-			System.out.println("permission wrong"+" "+user_code+" "+actioncode+" "+session);
-			rs.close();
-			return false;	
-		}	
+		boolean b_return = false;
+		try {
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(sql);
+			if(rset.next()){
+				sql = "update basic_user_session set lastaction = '"+actioncode+"' , lastactiontime = now() , count_actions = count_actions + 1 where user_code = '"+user_code+"' ;";
+				conn.createStatement().executeUpdate(sql);
+				b_return =  true;
+			}else{
+				System.out.println("permission wrong"+" "+user_code+" "+actioncode+" "+session);
+				b_return = false;	
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			b_return = false;
+		} finally {
+            try { if (rset != null) rset.close(); } catch(Exception ex) { }
+            try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
+            try { if (conn != null) conn.close(); } catch(Exception ex) { }
+        }
+		return b_return;			
 	}
 	
 	/**
 	 * 不需要进行 SESSION 匹配的权限验证
 	 * 比如 业务逻辑权限 验证
 	 * */
-	public static Boolean checkPermission(String user_code,String actioncode) throws SQLException  {
+	public static Boolean checkPermission(String user_code,String actioncode){
 		String sql = tools.getSQL("basic_user__checkPermission")
 				.replace("__user_code__", "'"+user_code+"'")
 				.replace("__session__", "session")
 				.replace("__actioncode__", actioncode);
-
-		ResultSet rs = tools.getGlobalConn().createStatement().executeQuery(sql);
-		if(rs.next()){
-			return true;
-		}
-		rs.close();
-		return false;		
+		Connection conn = tools.getConn();
+		Statement stmt = null;
+		ResultSet rset = null;
+		boolean b_return = false;
+		
+		try {
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(sql);
+			if(rset.next()){
+				b_return = true;
+			}else{
+				b_return = false;
+			}
+		} catch (SQLException e) {
+			b_return = false;
+			e.printStackTrace();
+		} finally {
+            try { if (rset != null) rset.close(); } catch(Exception ex) { }
+            try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
+            try { if (conn != null) conn.close(); } catch(Exception ex) { }
+        }
+		
+		return b_return;		
 	}	
 	
 	public static Boolean checkUsernameUsed(String username){
@@ -1019,7 +1041,7 @@ public class basic_user {
 	
 	public static Hashtable getSession(String executor) {
 		Hashtable t_return = new Hashtable();
-		Connection conn = tools.getGlobalConn();
+		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;	
 		try {
@@ -1041,7 +1063,7 @@ public class basic_user {
 		} finally {
             try { if (rset != null) rset.close(); } catch(Exception ex) { }
             try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
-//            try { if (conn != null) conn.close(); } catch(Exception ex) { }
+            try { if (conn != null) conn.close(); } catch(Exception ex) { }
         }
 		
 		return t_return;

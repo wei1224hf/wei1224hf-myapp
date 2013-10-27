@@ -230,7 +230,7 @@ public class gis_polygon {
 		gis_polygon.cid ++;		
 
 		try {			
-			Connection conn = tools.getConn_pg();
+			Connection conn = tools.getPostGreSqlConn();
 			
 			Statement st = conn.createStatement();
 			Statement st2 = conn.createStatement();
@@ -344,7 +344,7 @@ public class gis_polygon {
 	
 	public static void pg2mysql(){
 		try {			
-			Connection conn = tools.getConn_pg();
+			Connection conn = tools.getPostGreSqlConn();
 			Connection conn2 = tools.getConn();
 			
 			Statement st = conn.createStatement();

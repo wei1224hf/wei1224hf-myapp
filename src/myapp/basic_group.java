@@ -108,9 +108,6 @@ public class basic_group {
 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			out = e.toString();
 		}		
 		out = g.toJson(t);
 		return out;

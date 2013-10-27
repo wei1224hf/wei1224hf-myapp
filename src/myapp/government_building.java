@@ -178,9 +178,7 @@ public class government_building {
 			}				
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}		
+		} 	
 		out = g.toJson(t);
 		return out;
 	}

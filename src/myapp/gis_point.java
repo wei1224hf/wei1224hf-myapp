@@ -201,7 +201,7 @@ public class gis_point {
 	
 	public static void pg2mysql(){
 		try {			
-			Connection conn = tools.getConn_pg();
+			Connection conn = tools.getPostGreSqlConn();
 			Connection conn2 = tools.getConn();
 			
 			Statement st = conn.createStatement();
