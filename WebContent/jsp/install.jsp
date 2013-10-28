@@ -21,6 +21,7 @@ if(function.equals("step2")){
 	install.db = request.getParameter("db");
 	install.il8n = request.getParameter("il8n");
 	install.type = request.getParameter("type");
+	install.mode = request.getParameter("mode");
 	print = gson.toJson( install.step2() );
 }
 

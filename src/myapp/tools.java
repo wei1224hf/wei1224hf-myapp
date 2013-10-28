@@ -46,10 +46,8 @@ public class tools {
 		try {
 			String driver = "com.mysql.jdbc.Driver";
 			Class.forName(driver);
-			String url = tools.getConfigItem("DB_URL");
-			String user = tools.getConfigItem("DB_UNM");
-			String password = tools.getConfigItem("DB_PWD");			
-			conn = DriverManager.getConnection(url, user, password);			
+			String url = tools.getConfigItem("DB_URL");		
+			conn = DriverManager.getConnection(url);			
 			conn.createStatement().execute("SET NAMES UTF8");
 			conn.createStatement().execute("set time_zone='+8:00';");
 		} catch (SQLException e) {
@@ -66,12 +64,8 @@ public class tools {
 		try {
 			String driver = "org.postgresql.Driver";
 			Class.forName(driver);
-			String url = tools.getConfigItem("DB_URL");
-			String user = tools.getConfigItem("DB_UNM");
-			String password = tools.getConfigItem("DB_PWD");			
-			conn = DriverManager.getConnection(url, user, password);			
-			conn.createStatement().execute("SET NAMES UTF8");
-			conn.createStatement().execute("set time_zone='+8:00';");
+			String url = tools.getConfigItem("DB_URL");		
+			conn = DriverManager.getConnection(url);				
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -333,7 +327,8 @@ public class tools {
 	public static String configXMLFileName = "config.xml";
 	public static String getConfigItem(String id) {
 		String item = "";
-		if (tools.configXML == null) {
+		if (tools.configXML == null || id.equals("reLoad")) {
+			tools.dbType = null;
 			try {
 				String path = tools.class.getClassLoader().getResource("")
 						+ "../../"+tools.configXMLFileName;
@@ -392,12 +387,27 @@ public class tools {
 		item = tools.sqlXML.elementByID(id).getText();
 		return item;
 	}
-
-	public static int getTableId(String table) {
+	
+	
+	public static void updateTableId(String table){
+		Connection conn = tools.getConn();
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			tools.getSQL("basic_memory__id_update").replace("__code__",table);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+            try { if (stmt != null) stmt.close(); } catch(Exception e) { }
+            try { if (conn != null) conn.close(); } catch(Exception e) { }
+        }
+	}
+	public static int getTableId(String table){
+		return tools.getTableId(table,true);
+	}
+	public static int getTableId(String table,Boolean update) {
 		int id = 0;
-		String sql = tools.getSQL("basic_memory__id").replace(
-				"__code__", "'" + table + "'");
-		
+		String sql = tools.getSQL("basic_memory__id").replace("__code__", table );
 		Connection conn = tools.getConn();
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -405,13 +415,14 @@ public class tools {
 			stmt = conn.createStatement();
 			rset = stmt.executeQuery(sql);
 			rset.next();
-			id = rset.getInt("id");
-			stmt.executeUpdate(
-					tools.getSQL("basic_memory__id_add").replace("__code__",
-							"'" + table + "'"));
+			id = rset.getInt("id");			
+			if(update){
+				sql = tools.getSQL("basic_memory__id_update").replace("__code__",table);
+				stmt.executeUpdate(sql);
+			}
 			id++;
-		} catch (SQLException e) {			
-			return (int)(Math.random()*100000);
+		} catch (SQLException e) {		
+			id = 0;
 		} finally {
             try { if (rset != null) rset.close(); } catch(Exception e) { }
             try { if (stmt != null) stmt.close(); } catch(Exception e) { }
@@ -598,26 +609,27 @@ public class tools {
 //		System.out.println(System.getProperty("os.name"));
 
 //		tools.initMemory();
-		ArrayList a = new ArrayList();
-		Hashtable t1 = new Hashtable();
-		t1.put("code", "11");
-		a.add(t1);
-		t1 = new Hashtable();
-		t1.put("code", "12");
-		a.add(t1);
-		t1 = new Hashtable();
-		t1.put("code", "1201");
-		a.add(t1);
-		t1 = new Hashtable();
-		t1.put("code", "120101");
-		a.add(t1);
-		t1 = new Hashtable();
-		t1.put("code", "120102");
-		a.add(t1);
-		t1 = new Hashtable();
-		t1.put("code", "13");
-		a.add(t1);
-		
-		System.out.println( new Gson().toJson( tools.list2Tree(a) ) );
+		System.out.println(tools.getTableId("basic_user"));
+//		ArrayList a = new ArrayList();
+//		Hashtable t1 = new Hashtable();
+//		t1.put("code", "11");
+//		a.add(t1);
+//		t1 = new Hashtable();
+//		t1.put("code", "12");
+//		a.add(t1);
+//		t1 = new Hashtable();
+//		t1.put("code", "1201");
+//		a.add(t1);
+//		t1 = new Hashtable();
+//		t1.put("code", "120101");
+//		a.add(t1);
+//		t1 = new Hashtable();
+//		t1.put("code", "120102");
+//		a.add(t1);
+//		t1 = new Hashtable();
+//		t1.put("code", "13");
+//		a.add(t1);
+//		
+//		System.out.println( new Gson().toJson( tools.list2Tree(a) ) );
 	}
 }

@@ -290,60 +290,29 @@
 	<item ID="basic_memory">
 		<item ID="basic_memory__init">
 			delete from basic_memory where type = 2;
-			insert into
-			basic_memory
-			(code,type,extend1) values ('basic_user','2',0);
-			update
-			basic_memory
-			set extend1 = (select max(id) from basic_user)
-			where code
-			=
-			'basic_user' and type = 2;
-			insert into basic_memory
-			(code,type,extend1) values ('government_building','2',0);
-			update
-			basic_memory set extend1 = (select max(id) from government_building)
-			where code = 'government_building' and type = 2;
-			insert into
-			basic_memory (code,type,extend1) values
-			('government_family','2',0);
-			update basic_memory set extend1 = (select
-			max(id) from
-			government_family)
-			where code = 'government_family' and
-			type = 2;
-
-			insert into basic_memory (code,type,extend1) values
-			('government_resident','2',0);
-			update basic_memory set extend1 =
-			(select max(id) from government_resident) where code =
-			'government_resident' and type = 2;
-
-			insert into basic_memory (code,type,extend1) values
-			('government_company','2',0);
-			update basic_memory set extend1 =
-			(select max(id) from government_company) where code =
-			'government_company' and type = 2;
+			
+			insert into basic_memory (code,type,extend1) values ('basic_user','2',0); 
+			update basic_memory set extend1 = (select max(id) from basic_user) where code = 'basic_user' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('basic_group','2',0); 
+			update basic_memory set extend1 = (select max(id) from basic_group) where code = 'basic_group' and type = 2;			
 
 			insert into basic_memory (code,type,extend1) values ('oa_person','2',0);
-			update basic_memory set extend1 = (select max(id) from oa_person)
-			where code = 'oa_person' and type = 2;
-
-			insert into basic_memory
-			(code,type,extend1) values ('oa_plan','2',0);
-			update
-			basic_memory set
-			extend1 = (select max(id) from oa_plan)
-			where
-			code = 'oa_plan' and type
-			= 2;
-
-			insert into basic_memory
-			(code,type,extend1) values ('oa_work','2',0);
-			update
-			basic_memory set extend1 = (select max(id) from oa_work)
-			where
-			code = 'oa_work' and type = 2;
+			update basic_memory set extend1 = (select max(id) from oa_person) where code = 'oa_person' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('oa_plan','2',0);
+			update basic_memory set extend1 = (select max(id) from oa_plan) where code = 'oa_plan' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('oa_work','2',0);
+			update basic_memory set extend1 = (select max(id) from oa_work) where code = 'oa_work' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('oa_work_report','2',0);
+			update basic_memory set extend1 = (select max(id) from oa_work_report) where code = 'oa_work_report' and type = 2;			
+			
+			insert into basic_memory (code,type,extend1) values ('government_building','2',0);
+			update basic_memory set extend1 = (select max(id) from government_building) where code = 'government_building' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('government_family','2',0);
+			update basic_memory set extend1 = (select max(id) from government_family) where code = 'government_family' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('government_resident','2',0);
+			update basic_memory set extend1 = (select max(id) from government_resident) where code = 'government_resident' and type = 2;
+			insert into basic_memory (code,type,extend1) values ('government_company','2',0);
+			update basic_memory set extend1 = (select max(id) from government_company) where code = 'government_company' and type = 2;
 
 			delete from basic_memory where type = 1;
 
@@ -354,32 +323,20 @@
 			insert into basic_memory
 			(code,type,extend1,extend4,extend5) select
 			code,1,extend1,value,reference from basic_parameter where reference =
-			'industry' and (code &gt;= 'A') ;
+			'industry' and (code >= 'A') ;
 			delete from basic_memory where type
 			= 3;
 
 			select 1
 		</item>
 		<item ID="basic_memory__id">
-			select extend1 as id from basic_memory where type = 2
-			and
-			code = __code__
-		</item>
-		<item ID="basic_memory__id_add">
-			update basic_memory set extend1 = (extend1 + 1) where
-			type
-			= 2 and code =
-			__code__
+			select extend1 as id from basic_memory where type = 2 and code = '__code__'
 		</item>
 		<item ID="basic_memory__id_update">
-			update basic_memory set extend1 = ((select max(id) from
-			__code__)) where type
-			= 2 and code =
-			'__code__'
+			update basic_memory set extend1 = ((select max(id) from __code__)) where type = 2 and code = '__code__'
 		</item>
 	</item>
 	<item ID="government_building">
-
 		<item ID="government_building__grid">
 			select tempitem.*,astext(gis_polygon_16.ogc_geom) AS wkt,gis_polygon_16.id
 			AS id_gis from (
