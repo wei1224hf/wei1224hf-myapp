@@ -249,18 +249,44 @@ public class install {
 
 		String sql_create = "";
 		String sql_insert = "";
+		String tablename = null;
+		String language = "";
 		int sheetcount = workBook.getNumberOfSheets();
 		for (int i = 0; i < sheetcount; i++) {
 			Sheet sheet = workBook.getSheet(i);
 			int rows = sheet.getRows();
-
+			
 			for (int i2 = 0; i2 < rows; i2++) {
 				String theSQL = sheet.getCell(4, i2).getContents();
+
 				if(theSQL.contains("insert")){
 					sql_insert += theSQL  + "\r\t";
 				}else{
 					sql_create += theSQL  + "\r\t";
-				}					
+					if(sheet.getCell(0, i2).getContents()!=null){
+						language += sheet.getCell(1, i2).getContents()+"=\""+sheet.getCell(0, i2).getContents()+"\""+"\r\t";
+					}
+				}
+				if(theSQL.contains("create table")){
+					if(tablename!=null){
+						FileOutputStream fos;
+						try {
+							fos = new FileOutputStream(rootpath
+									+ "\\language\\"+tools.getConfigItem("IL8N")+"\\"+tablename+".ini");
+							OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+							osw.write(language);
+							osw.flush();
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						tablename = sheet.getCell(1, i2).getContents();
+					}					
+				}
 			}
 		}
 

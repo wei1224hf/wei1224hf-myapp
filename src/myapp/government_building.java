@@ -192,7 +192,7 @@ public class government_building {
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = "select left(code,2) as code,value from basic_parameter where code like  '__0000' and reference = 'zone' order by code";
+			String sql = "select code,title as value from exam_subject ";
 			rset = stmt.executeQuery(sql);
 			a = new ArrayList();
 			while (rset.next()) {			
